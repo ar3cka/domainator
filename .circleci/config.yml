@@ -14,7 +14,7 @@ jobs:
           name: Build And Test
           command: |
             export PATH="$PATH:/root/.dotnet/tools"
-            dotnet sonarscanner begin /k:"ar3cka_domainator" /d:sonar.host.url=https://sonarcloud.io /d:sonar.verbose=true /o:ar3cka /d:sonar.login=$SONAR_TOKEN
+            dotnet sonarscanner begin /k:"ar3cka_domainator" /d:sonar.host.url=https://sonarcloud.io /o:ar3cka /d:sonar.login=$SONAR_TOKEN
             dotnet build -c=Release
             dotnet test --no-build
             dotnet sonarscanner end /d:sonar.login=$SONAR_TOKEN
