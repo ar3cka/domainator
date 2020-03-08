@@ -12,6 +12,10 @@ ProjectSection(SolutionItems) = preProject
 	.circleci\config.yml = .circleci\config.yml
 EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domainator.UnitTests", "tests\Domainator.UnitTests\Domainator.UnitTests.csproj", "{D3C239F0-A984-4FC0-A2F2-F0597868F5D8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{F900C36D-F507-49F1-803A-767AB9B9A81D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,8 +41,21 @@ Global
 		{F7E24EAB-1894-4A75-9A02-7B1E130A7FF7}.Release|x64.Build.0 = Release|Any CPU
 		{F7E24EAB-1894-4A75-9A02-7B1E130A7FF7}.Release|x86.ActiveCfg = Release|Any CPU
 		{F7E24EAB-1894-4A75-9A02-7B1E130A7FF7}.Release|x86.Build.0 = Release|Any CPU
+		{D3C239F0-A984-4FC0-A2F2-F0597868F5D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3C239F0-A984-4FC0-A2F2-F0597868F5D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D3C239F0-A984-4FC0-A2F2-F0597868F5D8}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D3C239F0-A984-4FC0-A2F2-F0597868F5D8}.Debug|x64.Build.0 = Debug|Any CPU
+		{D3C239F0-A984-4FC0-A2F2-F0597868F5D8}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D3C239F0-A984-4FC0-A2F2-F0597868F5D8}.Debug|x86.Build.0 = Debug|Any CPU
+		{D3C239F0-A984-4FC0-A2F2-F0597868F5D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D3C239F0-A984-4FC0-A2F2-F0597868F5D8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D3C239F0-A984-4FC0-A2F2-F0597868F5D8}.Release|x64.ActiveCfg = Release|Any CPU
+		{D3C239F0-A984-4FC0-A2F2-F0597868F5D8}.Release|x64.Build.0 = Release|Any CPU
+		{D3C239F0-A984-4FC0-A2F2-F0597868F5D8}.Release|x86.ActiveCfg = Release|Any CPU
+		{D3C239F0-A984-4FC0-A2F2-F0597868F5D8}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{F7E24EAB-1894-4A75-9A02-7B1E130A7FF7} = {55AEFA5E-7318-4428-86C7-401D54B7151A}
+		{D3C239F0-A984-4FC0-A2F2-F0597868F5D8} = {F900C36D-F507-49F1-803A-767AB9B9A81D}
 	EndGlobalSection
 EndGlobal
