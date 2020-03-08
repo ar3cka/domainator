@@ -8,29 +8,16 @@ jobs:
       - checkout
       - run:
           name: Install SonarCloud
-          command: |
+          command:
             dotnet tool install --global dotnet-sonarscanner
+      - run:
+          name: Build And Test
+          command: |
             export PATH="$PATH:/root/.dotnet/tools"
-      - run:
-          name: Restore packages
-          command:
-            dotnet restore
-      - run:
-          name: Start SonarCloud scanner
-          command:
-            dotnet-sonarscanner begin /k:"ar3cka_domainator"
-      - run:
-          name: Build
-          command:
+            dotnet sonarscanner begin /k:"ar3cka_domainator"
             dotnet build
-      - run:
-          name: Test
-          command:
             dotnet test
-      - run:
-          name: Stop SonarCloud scanner
-          command:
-            dotnet-sonarscanner end
+            dotnet sonarscanner end
   
 workflows:
   version: 2
