@@ -6,11 +6,11 @@ namespace Domainator.Entities
     public abstract class AbstractEntityIdentity<TKey> : IEntityIdentity, IEquatable<AbstractEntityIdentity<TKey>> where TKey : notnull
     {
         public abstract TKey Id { get; protected set; }
-        
+
         public abstract string Tag { get; }
 
         public virtual string Value => Id.ToString();
-        
+
         public bool Equals(AbstractEntityIdentity<TKey>? other)
         {
             if (ReferenceEquals(null, other))
@@ -22,7 +22,7 @@ namespace Domainator.Entities
             {
                 return true;
             }
-            
+
             return EqualityComparer<TKey>.Default.Equals(Id, other.Id) && Tag.Equals(other.Tag, StringComparison.Ordinal);
         }
 
@@ -42,7 +42,7 @@ namespace Domainator.Entities
             {
                 return false;
             }
-            
+
             return Equals((AbstractEntityIdentity<TKey>) obj);
         }
 
