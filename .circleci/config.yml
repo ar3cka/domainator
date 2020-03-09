@@ -11,13 +11,21 @@ jobs:
           command: |
             apt-get update && apt-get install -y openjdk-11-jre
             dotnet tool install --global dotnet-sonarscanner
-      - run:
-          name: Build And Test
-          command: |
             export PATH="$PATH:/root/.dotnet/tools"
             dotnet sonarscanner begin /k:"ar3cka_domainator" /d:sonar.host.url=https://sonarcloud.io /o:ar3cka /d:sonar.login=$SONAR_TOKEN
+      - run:
+          name: Build
+          command: |
             dotnet build -c=Release
             dotnet test --no-build -c:Release
+      - run:
+          name: Test
+          command: |
+            dotnet test --no-build -c:Release
+      - run:
+          name: Publish results to SonarCloud
+          command: |
+            export PATH="$PATH:/root/.dotnet/tools"
             dotnet sonarscanner end /d:sonar.login=$SONAR_TOKEN
   
 workflows:
