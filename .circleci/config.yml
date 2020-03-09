@@ -17,11 +17,11 @@ jobs:
           name: Build
           command: |
             dotnet build -c=Release
-            dotnet test --no-build -c:Release
       - run:
           name: Test
           command: |
-            dotnet test --no-build -c:Release
+            dotnet add tests/Domainator.UnitTests/ package coverlet.msbuild
+            dotnet test --no-build -c:Release /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
       - run:
           name: Publish results to SonarCloud
           command: |
