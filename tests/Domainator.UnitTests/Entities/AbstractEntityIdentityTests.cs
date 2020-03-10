@@ -33,43 +33,55 @@ namespace Domainator.UnitTests.Entities
 
         [Theory]
         [AutoData]
-        public void EqualityTests_EqualsForTheSameTaskReturnsTrue(TaskId taskId)
+        public void Equals_ForTheSameTaskReturnsTrue(TaskId taskId)
         {
             Assert.Equal(taskId, taskId);
             Assert.True(taskId == new TaskId(taskId.Id));
+            Assert.False(taskId != new TaskId(taskId.Id));
             Assert.True(taskId.Equals(new TaskId(taskId.Id)));
         }
 
         [Theory]
         [AutoData]
-        public void EqualityTests_EqualsForDifferentTasksReturnsFalse(TaskId task1, TaskId task2)
+        public void Equals_ForDifferentTasksReturnsFalse(TaskId task1, TaskId task2)
         {
             Assert.NotEqual(task1, task2);
             Assert.False(task1 == task2);
+            Assert.True(task1 != task2);
             Assert.False(task1.Equals(task2));
         }
 
         [Theory]
         [AutoData]
-        public void EqualityTests_EqualsForDifferentAbstractEntityIdentitySubTypesReturnsFalse(TaskId task, UserId user)
+        public void Equals_ForDifferentAbstractEntityIdentitySubTypesReturnsFalse(TaskId task, UserId user)
         {
             var taskIdentity = task as AbstractEntityIdentity<int>;
             var userIdentity = user as AbstractEntityIdentity<int>;
 
             Assert.NotEqual(taskIdentity, userIdentity);
             Assert.False(taskIdentity == userIdentity);
+            Assert.True(taskIdentity != userIdentity);
             Assert.False(taskIdentity.Equals(userIdentity));
         }
 
         [Theory]
         [AutoData]
-        public void EqualityTests_EqualsForDifferentEntityIdentityTypesReturnsFalse(TaskId task, UserId user)
+        public void Equals_ForDifferentEntityIdentityTypesReturnsFalse(TaskId task, UserId user)
         {
             var taskIdentity = task as IEntityIdentity;
             var userIdentity = user as IEntityIdentity;
 
             Assert.NotEqual(taskIdentity, userIdentity);
             Assert.False(taskIdentity.Equals(userIdentity));
+        }
+
+        [Theory]
+        [AutoData]
+        public void Equals_ForTheSameInstanceReturnsTrue(TaskId task)
+        {
+            Assert.Equal(task, task);
+            Assert.True(task == task);
+            Assert.True(task.Equals(task));
         }
     }
 }
