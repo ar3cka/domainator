@@ -17,6 +17,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\samples\Domainator.Demo\Domainator.Demo.csproj" />
       <ProjectReference Include="..\..\src\Domainator\Domainator.csproj" />
     </ItemGroup>
 

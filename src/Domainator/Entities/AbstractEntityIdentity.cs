@@ -9,12 +9,16 @@ namespace Domainator.Entities
     /// </summary>
     /// <typeparam name="TKey">The type of scalar type.</typeparam>
     public abstract class AbstractEntityIdentity<TKey> : IEntityIdentity, IEquatable<AbstractEntityIdentity<TKey>>
-        where TKey : notnull
     {
+        protected AbstractEntityIdentity(TKey id)
+        {
+            Id = id;
+        }
+        
         /// <summary>
         /// Gets internal value of the identity as CLR type.
         /// </summary>
-        public abstract TKey Id { get; protected set; }
+        public TKey Id { get; }
 
         /// <inheritdoc />
         public abstract string Tag { get; }
@@ -23,7 +27,7 @@ namespace Domainator.Entities
         public virtual string Value => Id.ToString();
 
         /// <inheritdoc />
-        public virtual bool Equals(AbstractEntityIdentity<TKey>? other)
+        public virtual bool Equals(AbstractEntityIdentity<TKey> other)
         {
             if (ReferenceEquals(null, other))
             {
@@ -39,7 +43,7 @@ namespace Domainator.Entities
         }
 
         /// <inheritdoc />
-        public override bool Equals(object? obj)
+        public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj))
             {
@@ -64,15 +68,18 @@ namespace Domainator.Entities
         /// </summary>
         public override int GetHashCode()
         {
-            return HashCode.Combine(Id, Tag);
+            unchecked
+            {
+                return (EqualityComparer<TKey>.Default.GetHashCode(Id) * 397) ^ Tag.GetHashCode();
+            }
         }
 
-        public static bool operator ==(AbstractEntityIdentity<TKey>? left, AbstractEntityIdentity<TKey>? right)
+        public static bool operator ==(AbstractEntityIdentity<TKey> left, AbstractEntityIdentity<TKey> right)
         {
             return Equals(left, right);
         }
 
-        public static bool operator !=(AbstractEntityIdentity<TKey>? left, AbstractEntityIdentity<TKey>? right)
+        public static bool operator !=(AbstractEntityIdentity<TKey> left, AbstractEntityIdentity<TKey> right)
         {
             return !Equals(left, right);
         }
