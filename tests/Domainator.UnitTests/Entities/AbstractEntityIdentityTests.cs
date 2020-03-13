@@ -1,5 +1,5 @@
-using System;
 using AutoFixture.Xunit2;
+using Domainator.Demo.Domain.Domain;
 using Domainator.Entities;
 using Xunit;
 
@@ -7,43 +7,19 @@ namespace Domainator.UnitTests.Entities
 {
     public class AbstractEntityIdentityTests
     {
-        public sealed class TaskId : AbstractEntityIdentity<int>
-        {
-            public override string Tag => "task";
-
-            public TaskId(int id)
-            {
-                Id = id;
-            }
-
-            public override int Id { get; protected set; }
-        }
-
-        public sealed class UserId : AbstractEntityIdentity<int>
-        {
-            public override string Tag => "user";
-
-            public UserId(int id)
-            {
-                Id = id;
-            }
-
-            public override int Id { get; protected set; }
-        }
-
         [Theory]
         [AutoData]
-        public void Equals_ForTheSameTaskReturnsTrue(TaskId taskId)
+        public void Equals_ForTheSameTaskReturnsTrue(TodoTaskId taskId)
         {
             Assert.Equal(taskId, taskId);
-            Assert.True(taskId == new TaskId(taskId.Id));
-            Assert.False(taskId != new TaskId(taskId.Id));
-            Assert.True(taskId.Equals(new TaskId(taskId.Id)));
+            Assert.True(taskId == new TodoTaskId(taskId.Id));
+            Assert.False(taskId != new TodoTaskId(taskId.Id));
+            Assert.True(taskId.Equals(new TodoTaskId(taskId.Id)));
         }
 
         [Theory]
         [AutoData]
-        public void Equals_ForDifferentTasksReturnsFalse(TaskId task1, TaskId task2)
+        public void Equals_ForDifferentTasksReturnsFalse(TodoTaskId task1, TodoTaskId task2)
         {
             Assert.NotEqual(task1, task2);
             Assert.False(task1 == task2);
@@ -53,35 +29,41 @@ namespace Domainator.UnitTests.Entities
 
         [Theory]
         [AutoData]
-        public void Equals_ForDifferentAbstractEntityIdentitySubTypesReturnsFalse(TaskId task, UserId user)
+        public void Equals_ForDifferentAbstractEntityIdentitySubTypesReturnsFalse(TodoTaskId task, ProjectId project)
         {
             var taskIdentity = task as AbstractEntityIdentity<int>;
-            var userIdentity = user as AbstractEntityIdentity<int>;
+            var projectIdentity = project as AbstractEntityIdentity<int>;
 
-            Assert.NotEqual(taskIdentity, userIdentity);
-            Assert.False(taskIdentity == userIdentity);
-            Assert.True(taskIdentity != userIdentity);
-            Assert.False(taskIdentity.Equals(userIdentity));
+            Assert.NotEqual(taskIdentity, projectIdentity);
+            Assert.False(taskIdentity == projectIdentity);
+            Assert.True(taskIdentity != projectIdentity);
+            Assert.False(taskIdentity.Equals(projectIdentity));
         }
 
         [Theory]
         [AutoData]
-        public void Equals_ForDifferentEntityIdentityTypesReturnsFalse(TaskId task, UserId user)
+        public void Equals_ForDifferentEntityIdentityTypesReturnsFalse(TodoTaskId task, ProjectId project)
         {
             var taskIdentity = task as IEntityIdentity;
-            var userIdentity = user as IEntityIdentity;
+            var projectIdentity = project as IEntityIdentity;
 
-            Assert.NotEqual(taskIdentity, userIdentity);
-            Assert.False(taskIdentity.Equals(userIdentity));
+            Assert.NotEqual(taskIdentity, projectIdentity);
+            Assert.False(taskIdentity.Equals(projectIdentity));
         }
 
         [Theory]
         [AutoData]
-        public void Equals_ForTheSameInstanceReturnsTrue(TaskId task)
+        public void Equals_ForTheSameInstanceReturnsTrue(TodoTaskId task)
         {
             Assert.Equal(task, task);
-            Assert.True(task == task);
             Assert.True(task.Equals(task));
+        }
+
+        [Theory]
+        [AutoData]
+        public void Equals_WhenTheValueIsComparedWithNull_ReturnsFalse(TodoTaskId task)
+        {
+            Assert.False(task.Equals(null));
         }
     }
 }
