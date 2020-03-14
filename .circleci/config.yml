@@ -48,8 +48,10 @@ jobs:
             export PACKAGE_VERSION=`cat version.json | jq .NuGetVersionV2`
             dotnet pack --no-build -c:Release /p:PackageVersion=$PACKAGE_VERSION -o packages
 
-      - store_artifacts:
-          path: packages
+      - persist_to_workspace:
+          root: ./
+          paths:
+            - packages
 
       - run:
           name: Publish results to SonarCloud
@@ -60,11 +62,13 @@ jobs:
   publish:
       docker:
           - image: mcr.microsoft.com/dotnet/core/sdk:3.1.102-bionic
-      working_directory: packages
       steps:
+          - attach_workspace:
+                at: ./
           - run:
                 name: Publish packages to Nuget.org
                 command: |
+                    cd packages
                     dotnet nuget push *.nupkg -k $NUGET_API_KEY -s https://api.nuget.org/v3/index.json
 
 orbs:
