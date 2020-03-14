@@ -12,6 +12,7 @@ jobs:
          command: |
              export GITVERSION_VERSION="5.2.3"
              dotnet tool install --global GitVersion.Tool --version $GITVERSION_VERSION
+
       - run:
           name: Install SonarCloud
           command: |
@@ -24,31 +25,47 @@ jobs:
               /o:ar3cka                                                  \
               /d:sonar.cs.opencover.reportsPaths="tests/**/coverage.xml" \
               /d:sonar.login=$SONAR_TOKEN
+
       - run:
           name: Update package version
           command: |
             export PATH="$PATH:/root/.dotnet/tools"
             dotnet gitversion /updateassemblyinfo > version.json
+
       - run:
           name: Build
           command: |
             dotnet build -c=Release
+
       - run:
           name: Test
           command: |
             dotnet test --no-build -c:Release /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+
       - run:
           name: Create nuget packages
           command: |
             export PACKAGE_VERSION=`cat version.json | jq .NuGetVersionV2`
             dotnet pack --no-build -c:Release /p:PackageVersion=$PACKAGE_VERSION -o packages
+
       - store_artifacts:
           path: packages
+
       - run:
           name: Publish results to SonarCloud
           command: |
             export PATH="$PATH:/root/.dotnet/tools"
             dotnet sonarscanner end /d:sonar.login=$SONAR_TOKEN
+
+  publish:
+      docker:
+          - image: mcr.microsoft.com/dotnet/core/sdk:3.1.102-bionic
+      working_directory: packages
+      steps:
+        - run:
+            name: Deploy if tests pass and branch is Master
+            command: |
+              dotnet nuget push *.nupkg -k $NUGET_API_KEY
 orbs:
     jq: circleci/jq@1.5
 
@@ -58,3 +75,11 @@ workflows:
     jobs:
       - build:
           context: SonarCloud
+      - publish:
+          requires:
+              - build
+          context: Nuget
+          filters:
+            branches:
+              only:
+                - master
