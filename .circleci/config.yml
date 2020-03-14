@@ -28,7 +28,7 @@ jobs:
           name: Update package version
           command: |
             export PATH="$PATH:/root/.dotnet/tools"
-            dotnet gitversion /updateassemblyinfo
+            dotnet gitversion /updateassemblyinfo > version.json
       - run:
           name: Build
           command: |
@@ -37,6 +37,13 @@ jobs:
           name: Test
           command: |
             dotnet test --no-build -c:Release /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+      - run:
+          name: Create nuget packages
+          command: |
+            export PACKAGE_VERSION=`cat version.json | jq .NuGetVersionV2`
+            dotnet pack --no-build -c:Release /p:PackageVersion=$PACKAGE_VERSION -o packages
+      - store_artifacts:
+          path: packages
       - run:
           name: Publish results to SonarCloud
           command: |
