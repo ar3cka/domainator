@@ -62,10 +62,11 @@ jobs:
           - image: mcr.microsoft.com/dotnet/core/sdk:3.1.102-bionic
       working_directory: packages
       steps:
-        - run:
-            name: Deploy if tests pass and branch is Master
-            command: |
-              dotnet nuget push *.nupkg -k $NUGET_API_KEY
+          - run:
+                name: Publish packages to Nuget.org
+                command: |
+                    dotnet nuget push *.nupkg -k $NUGET_API_KEY -s https://api.nuget.org/v3/index.json
+
 orbs:
     jq: circleci/jq@1.5
 
