@@ -3,10 +3,18 @@
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
         <RootNamespace>Domainator.Demo.Domain</RootNamespace>
+        <IsPackable>false</IsPackable>
     </PropertyGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\..\src\Domainator\Domainator.csproj" />
     </ItemGroup>
   
+    <ItemGroup>
+      <Compile Include="..\Shared\Properties\AssemblyInfo.cs">
+        <Link>Properties/AssemblyInfo.cs</Link>
+      </Compile>
+    </ItemGroup>
+
+
 </Project>
