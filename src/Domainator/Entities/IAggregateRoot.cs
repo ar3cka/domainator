@@ -17,11 +17,18 @@ namespace Domainator.Entities
         /// <summary>
         /// Gets the state of the aggregate
         /// </summary>
-        IAggregateState State { get; }
+        TAggregateState State { get; }
 
         /// <summary>
         /// Gets the version of the aggregate.
         /// </summary>
         AggregateVersion Version { get; }
+
+        /// <summary>
+        /// Restores the state of the aggregate on the particular version.
+        /// </summary>
+        /// <param name="restoredState">The restored state.</param>
+        /// <param name="restoredVersion">The version of the aggregate.</param>
+        void RestoreFromState(TAggregateState restoredState, AggregateVersion restoredVersion);
     }
 }

@@ -3,19 +3,9 @@ using Domainator.Utilities;
 
 namespace Domainator.Demo.Domain.Domain
 {
-    public sealed class TodoTask : IAggregateRoot<TodoTaskId, TodoTaskState>
+    public sealed class TodoTask : AbstractAggregateRoot<TodoTaskId, TodoTaskState>
     {
         private TodoTaskId _id;
-        private readonly TodoTaskState _state;
-
-        public TodoTask(TodoTaskState state)
-        {
-            Require.NotNull(state, nameof(state));
-
-            _state = state;
-
-            Version = AggregateVersion.Emtpy;
-        }
 
         public void Create(ProjectId projectId, TodoTaskId taskId)
         {
@@ -24,11 +14,10 @@ namespace Domainator.Demo.Domain.Domain
 
             _id = taskId;
 
-
-            _state.Mutate(new TodoTaskCreated(projectId, taskId));
+            State.Mutate(new TodoTaskCreated(projectId, taskId));
         }
 
-        public IEntityIdentity Id
+        public override IEntityIdentity Id
         {
             get
             {
@@ -37,17 +26,5 @@ namespace Domainator.Demo.Domain.Domain
                 return _id;
             }
         }
-
-        public IAggregateState State
-        {
-            get
-            {
-                Ensure.True(_state != null, $"Aggregate {nameof(TodoTask)} has not been initialized properly.");
-
-                return _state;
-            }
-        }
-
-        public AggregateVersion Version { get; }
     }
 }
