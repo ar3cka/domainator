@@ -7,13 +7,11 @@ namespace Domainator.Demo.UnitTests.Domain
 {
     public class TodoTaskTests
     {
-        private readonly TodoTaskState _state;
         private readonly TodoTask _todoTask;
 
         public TodoTaskTests()
         {
-            _state = new TodoTaskState();
-            _todoTask = new TodoTask(_state);
+            _todoTask = new TodoTask();
         }
 
         [Theory]
@@ -24,8 +22,8 @@ namespace Domainator.Demo.UnitTests.Domain
             _todoTask.Create(projectId, taskId);
 
             // assert
-            Assert.NotNull(_state.ProjectId);
-            Assert.Equal(projectId, _state.ProjectId);
+            Assert.NotNull(_todoTask.State.ProjectId);
+            Assert.Equal(projectId, _todoTask.State.ProjectId);
 
             Assert.Contains(
                 _todoTask.State.Changes,
@@ -63,7 +61,7 @@ namespace Domainator.Demo.UnitTests.Domain
 
             // assert
             Assert.Contains(
-                _state.Changes,
+                _todoTask.State.Changes,
                 domainEvent =>
                     domainEvent is TodoTaskCreated todoTaskCreated &&
                     todoTaskCreated.ProjectId == projectId &&
