@@ -4,6 +4,11 @@ jobs:
   build:
     docker:
       - image: mcr.microsoft.com/dotnet/core/sdk:3.1.102-bionic
+      - image: circleci/dynamodb
+    environment:
+        AWS_ACCESS_KEY_ID: FOO
+        AWS_SECRET_ACCESS_KEY: FOO
+        AWS_REGION: FOO
     steps:
       - checkout
       - jq/install
@@ -38,9 +43,15 @@ jobs:
             dotnet build -c=Release
 
       - run:
-          name: Test
+          name: Run unit tests
           command: |
-            dotnet test --no-build -c:Release /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+              dotnet test tests/Domainator.UnitTests --no-build -c:Release /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+              dotnet test tests/Domainator.Demo.UnitTests --no-build -c:Release /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+
+      - run:
+            name: Run integrartion tests
+            command: |
+              dotnet test tests/Domainator.Aws.IntegrationTests --no-build -c:Release /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
 
       - run:
           name: Create nuget packages
