@@ -7,7 +7,7 @@ namespace Domainator.Utilities
     {
     }
 
-    public static class Require
+    internal static class Require
     {
         public static void NotNull<T>([ValidatedNotNullAttribute] T paramValue, string paramName) where T : class
         {

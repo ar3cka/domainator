@@ -9,23 +9,16 @@ namespace Domainator.UnitTests.Entities
     {
         [Theory]
         [AutoData]
-        public void NewRoot_HasDefaultStateAndVersion(TestableAbstractAggregateRoot entity)
+        public void RestoreFromState_UpdatesStateAndVersionOfTheAggregate(
+            [Frozen] AggregateVersion version,
+            [Frozen] TodoTaskState state,
+            [Frozen] TodoTaskId id,
+            TestableAbstractAggregateRoot entity)
         {
             // assert
-            Assert.NotNull(entity.State);
-            Assert.True(AggregateVersion.IsEmpty(entity.Version));
-        }
-
-        [Theory]
-        [AutoData]
-        public void RestoreFromState_UpdatesStateAndVersionOfTheAggregate(TestableAbstractAggregateRoot entity, TodoTaskState newState, AggregateVersion newVersion)
-        {
-            // act
-            entity.RestoreFromState(newState, newVersion);
-
-            // assert
-            Assert.Same(newState, entity.State);
-            Assert.Equal(newVersion, entity.Version);
+            Assert.Equal(id, entity.Id);
+            Assert.Equal(version, entity.Version);
+            Assert.Same(state, entity.State);
         }
     }
 }

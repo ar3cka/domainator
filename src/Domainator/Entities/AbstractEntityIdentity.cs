@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace Domainator.Entities
 {
@@ -14,7 +15,7 @@ namespace Domainator.Entities
         {
             Id = id;
         }
-        
+
         /// <summary>
         /// Gets internal value of the identity as CLR type.
         /// </summary>
@@ -83,5 +84,7 @@ namespace Domainator.Entities
         {
             return !Equals(left, right);
         }
+
+        public override string ToString() => string.Format(CultureInfo.InvariantCulture, "{0}|{1}", Tag, Value);
     }
 }

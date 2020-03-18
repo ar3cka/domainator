@@ -8,7 +8,6 @@
   <ItemGroup>
     <PackageReference Include="AutoFixture.AutoMoq" Version="4.11.0" />
     <PackageReference Include="AutoFixture.Xunit2" Version="4.11.0" />
-    <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.3.105.10" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
     <PackageReference Include="xunit" Version="2.4.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
@@ -19,7 +18,18 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\samples\Domainator.Demo\Domainator.Demo.csproj" />
+    <ProjectReference Include="..\..\src\Domainator.Aws.Infrastructure\Domainator.Aws.Infrastructure.csproj" />
     <ProjectReference Include="..\..\src\Domainator\Domainator.csproj" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <Compile Include="..\..\src\Shared\Utilities\Require.cs">
+      <Link>Utilities/Require.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\Shared\Utilities\Ensure.cs">
+      <Link>Utilities/Ensure.cs</Link>
+    </Compile>
   </ItemGroup>
 
 </Project>

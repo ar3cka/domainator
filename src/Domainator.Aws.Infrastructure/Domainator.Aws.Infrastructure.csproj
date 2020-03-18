@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <LangVersion>8</LangVersion>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <RootNamespace>Domainator.Infrastructure</RootNamespace>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/ar3cka/domainator/master/LICENSE</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/ar3cka/domainator</RepositoryUrl>
+    <PackageTags>DDD;EventSourcing</PackageTags>
+    <Authors>ar3cka</Authors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.3.105.10" />
+    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Shared\Properties\AssemblyInfo.cs">
+      <Link>Properties/AssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\Shared\Utilities\Require.cs">
+      <Link>Utilities/Require.cs</Link>
+    </Compile>
+    <Compile Include="..\Shared\Utilities\Ensure.cs">
+      <Link>Utilities/Ensure.cs</Link>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Domainator\Domainator.csproj" />
+  </ItemGroup>
+
+</Project>

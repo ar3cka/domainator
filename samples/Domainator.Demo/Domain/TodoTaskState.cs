@@ -12,7 +12,7 @@ namespace Domainator.Demo.Domain.Domain
             ProjectId = domainEvent.ProjectId;
         }
 
-        public ProjectId ProjectId { get; private set; }
+        public ProjectId ProjectId { get; set; }
     }
 }
 

@@ -5,11 +5,9 @@ namespace Domainator.UnitTests.Entities
 {
     public sealed class TestableAbstractAggregateRoot : AbstractAggregateRoot<TodoTaskId, TodoTaskState>
     {
-        public TestableAbstractAggregateRoot(TodoTaskId id)
+        public TestableAbstractAggregateRoot(TodoTaskId id, AggregateVersion version, TodoTaskState state)
+            : base(id, version, state)
         {
-            Id = id;
         }
-
-        public override IEntityIdentity Id { get; }
     }
 }
