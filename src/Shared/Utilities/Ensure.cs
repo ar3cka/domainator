@@ -2,7 +2,7 @@ using System;
 
 namespace Domainator.Utilities
 {
-    public static class Ensure
+    internal static class Ensure
     {
         public static void True(bool condition, string error)
         {
