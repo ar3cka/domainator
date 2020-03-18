@@ -8,9 +8,14 @@ using Xunit;
 
 namespace Domainator.Aws.IntegrationTests.StateManagement
 {
-    public class DynamoDbAggregateStateStorageTests
+    public class DynamoDbAggregateStateStorageTests : IClassFixture<AggregateStoreDynamoDbTableFixture>
     {
-        private readonly DynamoDbAggregateStateStorage<TodoTaskState> _stateStorage = new DynamoDbAggregateStateStorage<TodoTaskState>();
+        private readonly IAggregateStateStorage<TodoTaskState> _stateStorage;
+
+        public DynamoDbAggregateStateStorageTests(AggregateStoreDynamoDbTableFixture fixture)
+        {
+            _stateStorage = new DynamoDbAggregateStateStorage<TodoTaskState>(fixture.StoreTable);
+        }
 
         [Theory]
         [AutoData]
