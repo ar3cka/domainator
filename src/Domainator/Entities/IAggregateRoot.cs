@@ -5,7 +5,7 @@ namespace Domainator.Entities
     /// </summary>
     /// <typeparam name="TEntityId">The type of identity of the entity which is the root entity of the aggergate.</typeparam>
     /// <typeparam name="TAggregateState">The type of the state</typeparam>
-    public interface IAggregateRoot<TEntityId, TAggregateState>
+    public interface IAggregateRoot<out TEntityId, out TAggregateState>
         where TEntityId : IEntityIdentity
         where TAggregateState : IAggregateState
     {

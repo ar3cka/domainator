@@ -82,7 +82,7 @@ namespace Domainator.Infrastructure.StateManagement
             catch (ConditionalCheckFailedException exception)
             {
                 throw new StateWasConcurrentlyUpdatedException(
-                    $"The version \"{version}\" of the aggregate state \"{id}\" is not the latest",
+                    $"The version \"{version.ToString()}\" of the aggregate state \"{id}\" is not the latest",
                     exception);
             }
         }
