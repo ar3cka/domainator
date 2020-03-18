@@ -27,6 +27,8 @@ namespace Domainator.Infrastructure.StateManagement
         /// <param name="state">The state to persist.</param>
         /// <param name="version">The current version of the state.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
+        /// <exception cref="StateWasConcurrentlyUpdatedException">The exception is thrown in case the version of
+        /// the state does not match with <see cref="version"/>.</exception>
         Task PersistAsync(IEntityIdentity id, TState state, AggregateVersion version, CancellationToken cancellationToken);
     }
 }
