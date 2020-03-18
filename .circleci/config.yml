@@ -79,8 +79,7 @@ jobs:
           - run:
                 name: Publish packages to Nuget.org
                 command: |
-                    cd packages
-                    dotnet nuget push *.nupkg -k $NUGET_API_KEY -s https://api.nuget.org/v3/index.json
+                    for file in packages/*.nupkg; do dotnet nuget push $file -k $NUGET_API_KEY -s https://api.nuget.org/v3/index.json; done
 
 orbs:
     jq: circleci/jq@1.5
