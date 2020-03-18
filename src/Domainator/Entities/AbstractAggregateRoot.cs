@@ -1,4 +1,3 @@
-using System;
 using Domainator.Utilities;
 
 namespace Domainator.Entities
@@ -6,7 +5,7 @@ namespace Domainator.Entities
     /// <summary>
     /// A base implementation for aggregate roots
     /// </summary>
-    public abstract class AbstractAggregateRoot<TEntityId, TAggregateState> : IAggregateRoot<TEntityId, TAggregateState>
+    public class AbstractAggregateRoot<TEntityId, TAggregateState> : IAggregateRoot<TEntityId, TAggregateState>
         where TEntityId : class, IEntityIdentity
         where TAggregateState : class, IAggregateState, new()
     {
