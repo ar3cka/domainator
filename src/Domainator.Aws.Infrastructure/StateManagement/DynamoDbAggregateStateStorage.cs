@@ -17,6 +17,11 @@ namespace Domainator.Infrastructure.StateManagement
     {
         private const string HeadSortKeyValue = "HEAD";
 
+        private static readonly JsonConverter[] _converters =
+        {
+            new AbstractEntityIdentityValueConverter()
+        };
+
         private readonly Table _dynamoDbTable;
 
 
@@ -38,7 +43,7 @@ namespace Domainator.Infrastructure.StateManagement
             {
                 var restoredData = (string)document[KnownTableAttributes.Data];
                 var restoredVersion = (int)document[KnownTableAttributes.Version];
-                var state = JsonConvert.DeserializeObject<TState>(restoredData);
+                var state = JsonConvert.DeserializeObject<TState>(restoredData, _converters);
 
                 return (AggregateVersion.Create(restoredVersion), state);
             }
@@ -58,7 +63,7 @@ namespace Domainator.Infrastructure.StateManagement
             document[KnownTableAttributes.AggregateType] = id.Tag;
             document[KnownTableAttributes.PartitionKey] = ConvertToPrimaryKey(id);
             document[KnownTableAttributes.SortKey] = HeadSortKeyValue;
-            document[KnownTableAttributes.Data] = JsonConvert.SerializeObject(state);
+            document[KnownTableAttributes.Data] = JsonConvert.SerializeObject(state, _converters);
             document[KnownTableAttributes.Version] = (int)stateVersion;
 
             var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
