@@ -5,7 +5,7 @@ using Domainator.Entities;
 using Domainator.Utilities;
 using Newtonsoft.Json;
 
-namespace Domainator.Infrastructure.StateManagement
+namespace Domainator.Infrastructure.StateManagement.Serialization
 {
     public class AbstractEntityIdentityValueConverter : JsonConverter
     {
@@ -60,14 +60,13 @@ namespace Domainator.Infrastructure.StateManagement
         {
             Require.NotNull(objectType, nameof(objectType));
 
-            if (typeof(IEntityIdentity).IsAssignableFrom(objectType))
+            if (typeof(IEntityIdentity).IsAssignableFrom(objectType) &&
+                objectType.BaseType != null &&
+                objectType.BaseType.IsConstructedGenericType)
             {
-                if (objectType.BaseType != null && objectType.BaseType.IsConstructedGenericType)
-                {
-                    var genericTypeDefinition = objectType.BaseType.GetGenericTypeDefinition();
+                var genericTypeDefinition = objectType.BaseType.GetGenericTypeDefinition();
 
-                    return genericTypeDefinition == typeof(AbstractEntityIdentity<>);
-                }
+                return genericTypeDefinition == typeof(AbstractEntityIdentity<>);
             }
 
             return false;
