@@ -58,7 +58,7 @@ namespace Domainator.Infrastructure.StateManagement.Storage
             Require.NotNull(id, nameof(id));
             Require.NotNull(state, nameof(state));
 
-            var stateVersion = version.Increment(state.Changes.Count);
+            var stateVersion = version.Increment(state.GetChanges().Count);
 
             var document = new Document();
             document[KnownTableAttributes.AggregateType] = id.Tag;

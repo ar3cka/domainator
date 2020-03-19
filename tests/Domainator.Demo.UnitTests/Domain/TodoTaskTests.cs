@@ -18,7 +18,7 @@ namespace Domainator.Demo.UnitTests.Domain
             Assert.Equal(projectId, task.State.ProjectId);
 
             Assert.Contains(
-                task.State.Changes,
+                task.State.GetChanges(),
                 domainEvent =>
                     domainEvent is TodoTaskCreated todoTaskCreated &&
                     todoTaskCreated.ProjectId == projectId &&
@@ -47,7 +47,7 @@ namespace Domainator.Demo.UnitTests.Domain
 
             // assert
             Assert.Contains(
-                task.State.Changes,
+                task.State.GetChanges(),
                 domainEvent =>
                     domainEvent is TodoTaskCreated todoTaskCreated &&
                     todoTaskCreated.ProjectId == projectId &&
