@@ -16,6 +16,6 @@ namespace Domainator.Entities
         /// <summary>
         /// Gets the list of domain events that have been applied to the current state.
         /// </summary>
-        IReadOnlyList<object> Changes { get; }
+        IReadOnlyList<object> GetChanges();
     }
 }

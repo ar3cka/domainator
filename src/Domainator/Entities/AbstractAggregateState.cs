@@ -30,6 +30,6 @@ namespace Domainator.Entities
         }
 
         /// <inheritdoc />
-        public IReadOnlyList<object> Changes => _changes;
+        public IReadOnlyList<object> GetChanges() => _changes;
     }
 }
