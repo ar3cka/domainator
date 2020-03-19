@@ -4,10 +4,11 @@ using System.Threading.Tasks;
 using Amazon.DynamoDBv2.DocumentModel;
 using Amazon.DynamoDBv2.Model;
 using Domainator.Entities;
+using Domainator.Infrastructure.StateManagement.Serialization;
 using Domainator.Utilities;
 using Newtonsoft.Json;
 
-namespace Domainator.Infrastructure.StateManagement
+namespace Domainator.Infrastructure.StateManagement.Storage
 {
     /// <summary>
     /// Provides the implementation of <see cref="IAggregateStateStorage{TState}"/> based on AWS DynamoDB.

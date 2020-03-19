@@ -2,9 +2,9 @@ using System.Collections.Generic;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DocumentModel;
 using Amazon.DynamoDBv2.Model;
-using Domainator.Infrastructure.StateManagement;
+using Domainator.Infrastructure.StateManagement.Storage;
 
-namespace Domainator.Aws.IntegrationTests.StateManagement
+namespace Domainator.Aws.IntegrationTests.StateManagement.Storage
 {
     public class AggregateStoreDynamoDbTableFixture
     {
