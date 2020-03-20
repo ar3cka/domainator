@@ -18,6 +18,7 @@
 
     <ItemGroup>
       <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+      <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
     </ItemGroup>
 
     <ItemGroup>
@@ -30,6 +31,10 @@
       <Compile Include="..\Shared\Utilities\Ensure.cs">
         <Link>Utilities/Ensure.cs</Link>
       </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="StateManagement" />
     </ItemGroup>
   
 </Project>

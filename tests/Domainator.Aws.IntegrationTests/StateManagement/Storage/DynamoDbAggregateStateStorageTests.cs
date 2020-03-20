@@ -5,6 +5,7 @@ using Domainator.Demo.Domain.Domain;
 using Domainator.Entities;
 using Domainator.Infrastructure.StateManagement;
 using Domainator.Infrastructure.StateManagement.Storage;
+using Domainator.StateManagement.Serialization.Json;
 using Xunit;
 
 namespace Domainator.Aws.IntegrationTests.StateManagement.Storage
@@ -15,7 +16,9 @@ namespace Domainator.Aws.IntegrationTests.StateManagement.Storage
 
         public DynamoDbAggregateStateStorageTests(AggregateStoreDynamoDbTableFixture fixture)
         {
-            _stateStorage = new DynamoDbAggregateStateStorage<TodoTaskState>(fixture.StoreTable);
+            _stateStorage = new DynamoDbAggregateStateStorage<TodoTaskState>(
+                fixture.StoreTable,
+                new AggregateStateJsonSerializer());
         }
 
         [Theory]

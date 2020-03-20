@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Reflection;
 using Domainator.Entities;
 using Domainator.Utilities;
 using Newtonsoft.Json;
 
-namespace Domainator.Infrastructure.StateManagement.Serialization
+namespace Domainator.StateManagement.Serialization.Json
 {
-    public class AbstractEntityIdentityValueConverter : JsonConverter
+    internal class AbstractEntityIdentityValueConverter : JsonConverter
     {
         private class IdentityTypeConverterImpl
         {
@@ -17,6 +18,9 @@ namespace Domainator.Infrastructure.StateManagement.Serialization
             public IdentityTypeConverterImpl(Type identityType)
             {
                 _idProperty = identityType.GetProperty("Id", BindingFlags.Instance | BindingFlags.Public);
+
+                Debug.Assert(_idProperty != null, nameof(_idProperty) + " != null");
+
                 _ctor = identityType.GetConstructor(new [] { _idProperty.PropertyType });
             }
 

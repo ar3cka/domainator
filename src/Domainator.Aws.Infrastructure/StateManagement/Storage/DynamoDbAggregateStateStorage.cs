@@ -4,9 +4,8 @@ using System.Threading.Tasks;
 using Amazon.DynamoDBv2.DocumentModel;
 using Amazon.DynamoDBv2.Model;
 using Domainator.Entities;
-using Domainator.Infrastructure.StateManagement.Serialization;
+using Domainator.StateManagement.Serialization;
 using Domainator.Utilities;
-using Newtonsoft.Json;
 
 namespace Domainator.Infrastructure.StateManagement.Storage
 {
@@ -18,19 +17,16 @@ namespace Domainator.Infrastructure.StateManagement.Storage
     {
         private const string HeadSortKeyValue = "HEAD";
 
-        private static readonly JsonConverter[] _converters =
-        {
-            new AbstractEntityIdentityValueConverter()
-        };
-
         private readonly Table _dynamoDbTable;
+        private readonly IAggregateStateSerializer _serializer;
 
-
-        public DynamoDbAggregateStateStorage(Table dynamoDbTable)
+        public DynamoDbAggregateStateStorage(Table dynamoDbTable, IAggregateStateSerializer serializer)
         {
             Require.NotNull(dynamoDbTable, nameof(dynamoDbTable));
+            Require.NotNull(serializer, nameof(serializer));
 
             _dynamoDbTable = dynamoDbTable;
+            _serializer = serializer;
         }
 
         /// <inheritdoc />
@@ -44,7 +40,7 @@ namespace Domainator.Infrastructure.StateManagement.Storage
             {
                 var restoredData = (string)document[KnownTableAttributes.Data];
                 var restoredVersion = (int)document[KnownTableAttributes.Version];
-                var state = JsonConvert.DeserializeObject<TState>(restoredData, _converters);
+                var state = _serializer.Deserialize<TState>(restoredData);
 
                 return (AggregateVersion.Create(restoredVersion), state);
             }
@@ -64,7 +60,7 @@ namespace Domainator.Infrastructure.StateManagement.Storage
             document[KnownTableAttributes.AggregateType] = id.Tag;
             document[KnownTableAttributes.PartitionKey] = ConvertToPrimaryKey(id);
             document[KnownTableAttributes.SortKey] = HeadSortKeyValue;
-            document[KnownTableAttributes.Data] = JsonConvert.SerializeObject(state, _converters);
+            document[KnownTableAttributes.Data] = _serializer.Serialize(state);
             document[KnownTableAttributes.Version] = (int)stateVersion;
 
             var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
