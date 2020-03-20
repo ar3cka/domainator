@@ -18,7 +18,8 @@ namespace Domainator.UnitTests.StateManagement.Serialization.Json
             var serializedObject = JObject.Parse(_serializer.Serialize(state));
 
             // assert
-            Assert.Equal(state.ProjectId.Id, (int)serializedObject["ProjectId"]);
+            Assert.Equal(state.ProjectId.Id, (int)serializedObject["projectId"]);
+            Assert.Equal(TaskState.Created.ToString("G"), (string)serializedObject["taskState"]);
         }
 
         [Theory]
