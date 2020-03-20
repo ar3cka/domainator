@@ -5,7 +5,7 @@ namespace Domainator.Demo.Domain.Domain
 {
     public sealed class TodoTask : AbstractAggregateRoot<TodoTaskId, TodoTaskState>
     {
-        public TodoTask(TodoTaskId id) : base(id)
+        public TodoTask()
         {
         }
 
@@ -13,11 +13,14 @@ namespace Domainator.Demo.Domain.Domain
         {
         }
 
-        public void Create(ProjectId projectId)
+        public void Create(TodoTaskId taskId, ProjectId projectId)
         {
+            Require.NotNull(taskId, nameof(taskId));
             Require.NotNull(projectId, nameof(projectId));
 
-            State.Mutate(new TodoTaskCreated(projectId, Id));
+            Id = taskId;
+
+            State.Mutate(new TodoTaskCreated(projectId, taskId));
         }
     }
 }
