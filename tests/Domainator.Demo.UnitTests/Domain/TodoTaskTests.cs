@@ -6,52 +6,54 @@ namespace Domainator.Demo.UnitTests.Domain
 {
     public class TodoTaskTests
     {
+        private readonly TodoTask _task = new TodoTask();
+
         [Theory]
         [AutoData]
-        public void WhenTodoTaskCreated_ProjectIdPropertyReturnsTheCorrectValue(TodoTask task, ProjectId projectId)
+        public void WhenTodoTaskCreated_ProjectIdPropertyReturnsTheCorrectValue(TodoTaskId taskId, ProjectId projectId)
         {
             // act
-            task.Create(projectId);
+            _task.Create(taskId, projectId);
 
             // assert
-            Assert.NotNull(task.State.ProjectId);
-            Assert.Equal(projectId, task.State.ProjectId);
+            Assert.NotNull(_task.State.ProjectId);
+            Assert.Equal(projectId, _task.State.ProjectId);
 
             Assert.Contains(
-                task.State.GetChanges(),
+                _task.State.GetChanges(),
                 domainEvent =>
                     domainEvent is TodoTaskCreated todoTaskCreated &&
                     todoTaskCreated.ProjectId == projectId &&
-                    todoTaskCreated.TaskId == task.Id);
+                    todoTaskCreated.TaskId == _task.Id);
         }
 
         [Theory]
         [AutoData]
         public void WhenTodoTaskCreated_TaskIdPropertyReturnsTheCorrectValue(
-            [Frozen] TodoTaskId taskId, ProjectId projectId, TodoTask task)
+            [Frozen] TodoTaskId taskId, ProjectId projectId)
         {
             // act
-            task.Create(projectId);
+            _task.Create(taskId, projectId);
 
             // assert
-            Assert.IsType<TodoTaskId>(task.Id);
-            Assert.Equal(taskId, task.Id);
+            Assert.IsType<TodoTaskId>(_task.Id);
+            Assert.Equal(taskId, _task.Id);
         }
 
         [Theory]
         [AutoData]
-        public void WhenTodoTaskCreated_CorrespondingEventIsGenerated(TodoTask task, ProjectId projectId)
+        public void WhenTodoTaskCreated_CorrespondingEventIsGenerated(TodoTaskId taskId, ProjectId projectId)
         {
             // act
-            task.Create(projectId);
+            _task.Create(taskId, projectId);
 
             // assert
             Assert.Contains(
-                task.State.GetChanges(),
+                _task.State.GetChanges(),
                 domainEvent =>
                     domainEvent is TodoTaskCreated todoTaskCreated &&
                     todoTaskCreated.ProjectId == projectId &&
-                    todoTaskCreated.TaskId == task.Id);
+                    todoTaskCreated.TaskId == _task.Id);
         }
     }
 }
