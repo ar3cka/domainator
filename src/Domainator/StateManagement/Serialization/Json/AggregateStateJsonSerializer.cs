@@ -1,6 +1,8 @@
 using Domainator.Entities;
 using Domainator.Utilities;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 
 namespace Domainator.StateManagement.Serialization.Json
 {
@@ -9,9 +11,19 @@ namespace Domainator.StateManagement.Serialization.Json
     /// </summary>
     public class AggregateStateJsonSerializer : IAggregateStateSerializer
     {
-        private static readonly JsonConverter[] _defaultConverters =
+        private static readonly JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings
         {
-            new AbstractEntityIdentityValueConverter()
+            NullValueHandling = NullValueHandling.Ignore,
+            DateTimeZoneHandling = DateTimeZoneHandling.Utc,
+            ContractResolver = new DefaultContractResolver
+            {
+                NamingStrategy = new CamelCaseNamingStrategy()
+            },
+            Converters =
+            {
+                new AbstractEntityIdentityValueConverter(),
+                new StringEnumConverter()
+            }
         };
 
         /// <inheritdoc />
@@ -19,7 +31,7 @@ namespace Domainator.StateManagement.Serialization.Json
         {
             Require.NotNull(state, nameof(state));
 
-            return JsonConvert.SerializeObject(state, _defaultConverters);
+            return JsonConvert.SerializeObject(state, _jsonSerializerSettings);
         }
 
         /// <inheritdoc />
@@ -27,7 +39,7 @@ namespace Domainator.StateManagement.Serialization.Json
         {
             Require.NotEmpty(serializedState, nameof(serializedState));
 
-            return JsonConvert.DeserializeObject<TState>(serializedState, _defaultConverters);
+            return JsonConvert.DeserializeObject<TState>(serializedState, _jsonSerializerSettings);
         }
     }
 }
