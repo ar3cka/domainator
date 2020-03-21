@@ -4,8 +4,8 @@ using AutoFixture.Xunit2;
 using Domainator.Demo.Domain.Domain;
 using Domainator.Entities;
 using Domainator.Infrastructure.StateManagement;
+using Domainator.Infrastructure.StateManagement.Serialization.Json;
 using Domainator.Infrastructure.StateManagement.Storage;
-using Domainator.StateManagement.Serialization.Json;
 using Xunit;
 
 namespace Domainator.Aws.IntegrationTests.StateManagement.Storage

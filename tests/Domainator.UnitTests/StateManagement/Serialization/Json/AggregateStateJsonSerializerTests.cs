@@ -1,6 +1,6 @@
 using AutoFixture.Xunit2;
 using Domainator.Demo.Domain.Domain;
-using Domainator.StateManagement.Serialization.Json;
+using Domainator.Infrastructure.StateManagement.Serialization.Json;
 using Newtonsoft.Json.Linq;
 using Xunit;
 

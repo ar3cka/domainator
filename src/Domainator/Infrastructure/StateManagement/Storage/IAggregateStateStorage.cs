@@ -2,7 +2,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Domainator.Entities;
 
-namespace Domainator.Infrastructure.StateManagement
+namespace Domainator.Infrastructure.StateManagement.Storage
 {
     /// <summary>
     /// The interface for external storage for aggregate states
@@ -21,7 +21,7 @@ namespace Domainator.Infrastructure.StateManagement
 
         /// <summary>
         /// Persists the state of an aggregate to external storage. The state version will be incremented on the number of changes in
-        /// <see cref="IAggregateState.Changes"/>.
+        /// <see cref="IAggregateState.GetChanges"/>.
         /// </summary>
         /// <param name="id">The unique identifier of the aggregate root.</param>
         /// <param name="state">The state to persist.</param>

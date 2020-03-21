@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Amazon.DynamoDBv2.DocumentModel;
 using Amazon.DynamoDBv2.Model;
 using Domainator.Entities;
-using Domainator.StateManagement.Serialization;
+using Domainator.Infrastructure.StateManagement.Serialization;
 using Domainator.Utilities;
 
 namespace Domainator.Infrastructure.StateManagement.Storage
