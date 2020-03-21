@@ -1,6 +1,6 @@
 using Domainator.Entities;
 
-namespace Domainator.Infrastructure.StateManagement.Serialization
+namespace Domainator.Infrastructure.Repositories.StateManagement.Serialization
 {
     /// <summary>
     /// The interface for <see cref="IAggregateState"/> serializer.

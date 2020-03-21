@@ -22,5 +22,12 @@ namespace Domainator.Demo.Domain.Domain
 
             State.Mutate(new TodoTaskCreated(projectId, taskId));
         }
+
+        public void MoveToProject(ProjectId projectId)
+        {
+            Require.NotNull(projectId, nameof(projectId));
+
+            State.Mutate(new TodoTaskMoved(Id, State.ProjectId, projectId));
+        }
     }
 }

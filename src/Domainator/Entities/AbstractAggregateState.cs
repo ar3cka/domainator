@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Domainator.Utilities;
 
 namespace Domainator.Entities
@@ -31,5 +32,8 @@ namespace Domainator.Entities
 
         /// <inheritdoc />
         public IReadOnlyList<object> GetChanges() => _changes;
+
+        /// <inheritdoc />
+        public bool IsUpdated => _changes.Any();
     }
 }
