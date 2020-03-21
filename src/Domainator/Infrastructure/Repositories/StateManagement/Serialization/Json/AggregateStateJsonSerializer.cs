@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 
-namespace Domainator.Infrastructure.StateManagement.Serialization.Json
+namespace Domainator.Infrastructure.Repositories.StateManagement.Serialization.Json
 {
     /// <summary>
     /// Implements JSON <see cref="IAggregateStateSerializer"/> based on Newtonsoft.Json.

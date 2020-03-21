@@ -1,10 +1,10 @@
 using AutoFixture.Xunit2;
 using Domainator.Demo.Domain.Domain;
-using Domainator.Infrastructure.StateManagement.Serialization.Json;
+using Domainator.Infrastructure.Repositories.StateManagement.Serialization.Json;
 using Newtonsoft.Json.Linq;
 using Xunit;
 
-namespace Domainator.UnitTests.StateManagement.Serialization.Json
+namespace Domainator.UnitTests.Infrastructure.Repositories.StateManagement.Serialization.Json
 {
     public class AggregateStateJsonSerializerTests
     {

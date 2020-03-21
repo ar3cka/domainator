@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace Domainator.Infrastructure.StateManagement.Storage
+namespace Domainator.Infrastructure.Repositories.StateManagement.Storage
 {
     /// <summary>
     /// The error indicates that during the updated the underlying storage detected concurrent update of the record

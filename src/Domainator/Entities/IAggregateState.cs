@@ -17,5 +17,10 @@ namespace Domainator.Entities
         /// Gets the list of domain events that have been applied to the current state.
         /// </summary>
         IReadOnlyList<object> GetChanges();
+
+        /// <summary>
+        /// Indicates that the state contains changes
+        /// </summary>
+        bool IsUpdated { get; }
     }
 }

@@ -6,7 +6,7 @@ using Domainator.Entities;
 using Domainator.Utilities;
 using Newtonsoft.Json;
 
-namespace Domainator.Infrastructure.StateManagement.Serialization.Json
+namespace Domainator.Infrastructure.Repositories.StateManagement.Serialization.Json
 {
     internal class AbstractEntityIdentityValueConverter : JsonConverter
     {

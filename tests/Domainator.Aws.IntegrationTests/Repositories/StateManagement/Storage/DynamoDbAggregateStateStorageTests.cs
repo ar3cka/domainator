@@ -3,12 +3,11 @@ using System.Threading.Tasks;
 using AutoFixture.Xunit2;
 using Domainator.Demo.Domain.Domain;
 using Domainator.Entities;
-using Domainator.Infrastructure.StateManagement;
-using Domainator.Infrastructure.StateManagement.Serialization.Json;
-using Domainator.Infrastructure.StateManagement.Storage;
+using Domainator.Infrastructure.Repositories.StateManagement.Serialization.Json;
+using Domainator.Infrastructure.Repositories.StateManagement.Storage;
 using Xunit;
 
-namespace Domainator.Aws.IntegrationTests.StateManagement.Storage
+namespace Domainator.Aws.IntegrationTests.Repositories.StateManagement.Storage
 {
     public class DynamoDbAggregateStateStorageTests : IClassFixture<AggregateStoreDynamoDbTableFixture>
     {

@@ -2,7 +2,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Domainator.Entities;
 
-namespace Domainator.Infrastructure.StateManagement.Storage
+namespace Domainator.Infrastructure.Repositories.StateManagement.Storage
 {
     /// <summary>
     /// The interface for external storage for aggregate states

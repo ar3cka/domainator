@@ -1,4 +1,4 @@
-namespace Domainator.Infrastructure.StateManagement.Storage
+namespace Domainator.Infrastructure.Repositories.StateManagement.Storage
 {
     public static class KnownTableAttributes
     {
