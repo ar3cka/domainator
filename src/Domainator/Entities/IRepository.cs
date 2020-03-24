@@ -8,7 +8,7 @@ namespace Domainator.Entities
     /// </summary>
     /// <typeparam name="TEntityId">The type of unique identity of the root entity.</typeparam>
     /// <typeparam name="TAggregateRoot">The type of aggregate root entity.</typeparam>
-    public interface IAggregateRootRepository<in TEntityId, TAggregateRoot>
+    public interface IRepository<in TEntityId, TAggregateRoot>
         where TEntityId : class, IEntityIdentity
         where TAggregateRoot : class, IAggregateRoot
     {

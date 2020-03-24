@@ -1,4 +1,3 @@
-using System.Runtime.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoFixture.Xunit2;
@@ -18,7 +17,7 @@ namespace Domainator.UnitTests.Infrastructure.Repositories
         public async Task FindByIdAsync_WhenStateDoesNotExist_ReturnsNull(
             [Frozen] Mock<IAggregateStateStorage<TodoTask.AggregateState>> stateStorageMock,
             TodoTaskId todoTaskId,
-            GenericAggregateRootRepository<TodoTaskId, TodoTask, TodoTask.AggregateState> repository)
+            GenericRepository<TodoTaskId, TodoTask, TodoTask.AggregateState> repository)
         {
             // arrange
             stateStorageMock
@@ -37,7 +36,7 @@ namespace Domainator.UnitTests.Infrastructure.Repositories
         public async Task GetByIdAsync_WhenStateDoesNotExist_ThrowsEntityNotFoundException(
             [Frozen] Mock<IAggregateStateStorage<TodoTask.AggregateState>> stateStorageMock,
             TodoTaskId todoTaskId,
-            GenericAggregateRootRepository<TodoTaskId, TodoTask, TodoTask.AggregateState> repository)
+            GenericRepository<TodoTaskId, TodoTask, TodoTask.AggregateState> repository)
         {
             // arrange
             stateStorageMock
@@ -56,7 +55,7 @@ namespace Domainator.UnitTests.Infrastructure.Repositories
             AggregateVersion version,
             TodoTask.AggregateState todoTaskState,
             TodoTaskId todoTaskId,
-            GenericAggregateRootRepository<TodoTaskId, TodoTask, TodoTask.AggregateState> repository)
+            GenericRepository<TodoTaskId, TodoTask, TodoTask.AggregateState> repository)
         {
             // arrange
             stateStorageMock
@@ -77,7 +76,7 @@ namespace Domainator.UnitTests.Infrastructure.Repositories
             [Frozen] Mock<IAggregateStateStorage<TodoTask.AggregateState>> stateStorageMock,
             ProjectId projectId,
             TodoTask task,
-            GenericAggregateRootRepository<TodoTaskId, TodoTask, TodoTask.AggregateState> repository)
+            GenericRepository<TodoTaskId, TodoTask, TodoTask.AggregateState> repository)
         {
             // arrange
             task.MoveToProject(projectId);
@@ -96,7 +95,7 @@ namespace Domainator.UnitTests.Infrastructure.Repositories
         public async Task SaveAsync_WhenTheStateHasNoChanges_SkipPersisting(
             [Frozen] Mock<IAggregateStateStorage<TodoTask.AggregateState>> stateStorageMock,
             TodoTask task,
-            GenericAggregateRootRepository<TodoTaskId, TodoTask, TodoTask.AggregateState> repository)
+            GenericRepository<TodoTaskId, TodoTask, TodoTask.AggregateState> repository)
         {
             // act
             await repository.SaveAsync(task, CancellationToken.None);

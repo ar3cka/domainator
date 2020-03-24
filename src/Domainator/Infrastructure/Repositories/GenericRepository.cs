@@ -8,19 +8,19 @@ using Domainator.Utilities;
 namespace Domainator.Infrastructure.Repositories
 {
     /// <summary>
-    /// Generic implementation of <see cref="IAggregateRootRepository{TEntityId,TAggregateRoot,TAggregateState}"./>
+    /// Generic implementation of <see cref="IRepository{TEntityId,TAggregateRoot}"/>.
     /// </summary>
     /// <typeparam name="TEntityId">The type of unique identity of the root entity.</typeparam>
     /// <typeparam name="TAggregateRoot">The type of aggregate root entity.</typeparam>
     /// <typeparam name="TAggregateState">The type of the state of of the aggregate.</typeparam>
-    public class GenericAggregateRootRepository<TEntityId, TAggregateRoot, TAggregateState> : IAggregateRootRepository<TEntityId, TAggregateRoot>
+    public class GenericRepository<TEntityId, TAggregateRoot, TAggregateState> : IRepository<TEntityId, TAggregateRoot>
         where TAggregateRoot: class, IAggregateRoot
         where TAggregateState : IAggregateState
         where TEntityId : class, IEntityIdentity
     {
         private readonly IAggregateStateStorage<TAggregateState> _stateStorage;
 
-        public GenericAggregateRootRepository(IAggregateStateStorage<TAggregateState> stateStorage)
+        public GenericRepository(IAggregateStateStorage<TAggregateState> stateStorage)
         {
             Require.NotNull(stateStorage, nameof(stateStorage));
 
