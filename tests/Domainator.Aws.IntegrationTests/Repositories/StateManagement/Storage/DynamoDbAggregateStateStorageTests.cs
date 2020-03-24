@@ -11,11 +11,11 @@ namespace Domainator.Aws.IntegrationTests.Repositories.StateManagement.Storage
 {
     public class DynamoDbAggregateStateStorageTests : IClassFixture<AggregateStoreDynamoDbTableFixture>
     {
-        private readonly IAggregateStateStorage<TodoTaskState> _stateStorage;
+        private readonly IAggregateStateStorage<TodoTask.AggregateState> _stateStorage;
 
         public DynamoDbAggregateStateStorageTests(AggregateStoreDynamoDbTableFixture fixture)
         {
-            _stateStorage = new DynamoDbAggregateStateStorage<TodoTaskState>(
+            _stateStorage = new DynamoDbAggregateStateStorage<TodoTask.AggregateState>(
                 fixture.StoreTable,
                 new AggregateStateJsonSerializer());
         }
@@ -33,7 +33,7 @@ namespace Domainator.Aws.IntegrationTests.Repositories.StateManagement.Storage
 
         [Theory]
         [AutoData]
-        public async Task LoadAsync_CanReadPersistedState(TodoTaskId id, AggregateVersion originalVersion, TodoTaskState state)
+        public async Task LoadAsync_CanReadPersistedState(TodoTaskId id, AggregateVersion originalVersion, TodoTask.AggregateState state)
         {
             // arrange
             await _stateStorage.PersistAsync(id, state, originalVersion, CancellationToken.None);
@@ -52,7 +52,7 @@ namespace Domainator.Aws.IntegrationTests.Repositories.StateManagement.Storage
             TodoTaskId id,
             TodoTaskCreated todoTaskCreated,
             AggregateVersion originalVersion,
-            TodoTaskState state)
+            TodoTask.AggregateState state)
         {
             // arrange
             state.Mutate(todoTaskCreated);
@@ -72,7 +72,7 @@ namespace Domainator.Aws.IntegrationTests.Repositories.StateManagement.Storage
         public async Task LoadAsync_WhenStageWasUpdatedConcurrently_Throws(
             TodoTaskId id,
             AggregateVersion originalVersion,
-            TodoTaskState state)
+            TodoTask.AggregateState state)
         {
             // arrange
             await _stateStorage.PersistAsync(id, state, originalVersion.Increment(), CancellationToken.None);

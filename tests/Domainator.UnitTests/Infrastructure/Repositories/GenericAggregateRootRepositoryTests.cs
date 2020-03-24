@@ -16,9 +16,9 @@ namespace Domainator.UnitTests.Infrastructure.Repositories
         [Theory]
         [GenericAggregateRootRepositoryTestsData]
         public async Task FindByIdAsync_WhenStateDoesNotExist_ReturnsNull(
-            [Frozen] Mock<IAggregateStateStorage<TodoTaskState>> stateStorageMock,
+            [Frozen] Mock<IAggregateStateStorage<TodoTask.AggregateState>> stateStorageMock,
             TodoTaskId todoTaskId,
-            GenericAggregateRootRepository<TodoTaskId, TodoTask, TodoTaskState> repository)
+            GenericAggregateRootRepository<TodoTaskId, TodoTask, TodoTask.AggregateState> repository)
         {
             // arrange
             stateStorageMock
@@ -35,9 +35,9 @@ namespace Domainator.UnitTests.Infrastructure.Repositories
         [Theory]
         [GenericAggregateRootRepositoryTestsData]
         public async Task GetByIdAsync_WhenStateDoesNotExist_ThrowsEntityNotFoundException(
-            [Frozen] Mock<IAggregateStateStorage<TodoTaskState>> stateStorageMock,
+            [Frozen] Mock<IAggregateStateStorage<TodoTask.AggregateState>> stateStorageMock,
             TodoTaskId todoTaskId,
-            GenericAggregateRootRepository<TodoTaskId, TodoTask, TodoTaskState> repository)
+            GenericAggregateRootRepository<TodoTaskId, TodoTask, TodoTask.AggregateState> repository)
         {
             // arrange
             stateStorageMock
@@ -52,11 +52,11 @@ namespace Domainator.UnitTests.Infrastructure.Repositories
         [Theory]
         [GenericAggregateRootRepositoryTestsData]
         public async Task GetByIdAsync_WhenStateExists_ReturnsAggregateRootWithRestoredStateAndVersion(
-            [Frozen] Mock<IAggregateStateStorage<TodoTaskState>> stateStorageMock,
+            [Frozen] Mock<IAggregateStateStorage<TodoTask.AggregateState>> stateStorageMock,
             AggregateVersion version,
-            TodoTaskState todoTaskState,
+            TodoTask.AggregateState todoTaskState,
             TodoTaskId todoTaskId,
-            GenericAggregateRootRepository<TodoTaskId, TodoTask, TodoTaskState> repository)
+            GenericAggregateRootRepository<TodoTaskId, TodoTask, TodoTask.AggregateState> repository)
         {
             // arrange
             stateStorageMock
@@ -74,10 +74,10 @@ namespace Domainator.UnitTests.Infrastructure.Repositories
         [Theory]
         [GenericAggregateRootRepositoryTestsData]
         public async Task SaveAsync_WhenTheStateHasChanges_PersistsTheStateAndVersionUsingStorage(
-            [Frozen] Mock<IAggregateStateStorage<TodoTaskState>> stateStorageMock,
+            [Frozen] Mock<IAggregateStateStorage<TodoTask.AggregateState>> stateStorageMock,
             ProjectId projectId,
             TodoTask task,
-            GenericAggregateRootRepository<TodoTaskId, TodoTask, TodoTaskState> repository)
+            GenericAggregateRootRepository<TodoTaskId, TodoTask, TodoTask.AggregateState> repository)
         {
             // arrange
             task.MoveToProject(projectId);
@@ -87,23 +87,23 @@ namespace Domainator.UnitTests.Infrastructure.Repositories
 
             // assert
             stateStorageMock.Verify(
-                self => self.PersistAsync(task.Id, task.State, task.Version, It.IsAny<CancellationToken>()),
+                self => self.PersistAsync(task.Id, (TodoTask.AggregateState)task.State, task.Version, It.IsAny<CancellationToken>()),
                 Times.Once);
         }
 
         [Theory]
         [GenericAggregateRootRepositoryTestsData]
         public async Task SaveAsync_WhenTheStateHasNoChanges_SkipPersisting(
-            [Frozen] Mock<IAggregateStateStorage<TodoTaskState>> stateStorageMock,
+            [Frozen] Mock<IAggregateStateStorage<TodoTask.AggregateState>> stateStorageMock,
             TodoTask task,
-            GenericAggregateRootRepository<TodoTaskId, TodoTask, TodoTaskState> repository)
+            GenericAggregateRootRepository<TodoTaskId, TodoTask, TodoTask.AggregateState> repository)
         {
             // act
             await repository.SaveAsync(task, CancellationToken.None);
 
             // assert
             stateStorageMock.Verify(
-                self => self.PersistAsync(task.Id, task.State, task.Version, It.IsAny<CancellationToken>()),
+                self => self.PersistAsync(task.Id, (TodoTask.AggregateState)task.State, task.Version, It.IsAny<CancellationToken>()),
                 Times.Never);
         }
     }

@@ -13,8 +13,8 @@ namespace Domainator.Infrastructure.Repositories
     /// <typeparam name="TEntityId">The type of unique identity of the root entity.</typeparam>
     /// <typeparam name="TAggregateRoot">The type of aggregate root entity.</typeparam>
     /// <typeparam name="TAggregateState">The type of the state of of the aggregate.</typeparam>
-    public class GenericAggregateRootRepository<TEntityId, TAggregateRoot, TAggregateState> : IAggregateRootRepository<TEntityId, TAggregateRoot, TAggregateState>
-        where TAggregateRoot: class, IAggregateRoot<TEntityId, TAggregateState>
+    public class GenericAggregateRootRepository<TEntityId, TAggregateRoot, TAggregateState> : IAggregateRootRepository<TEntityId, TAggregateRoot>
+        where TAggregateRoot: class, IAggregateRoot
         where TAggregateState : IAggregateState
         where TEntityId : class, IEntityIdentity
     {
@@ -62,7 +62,7 @@ namespace Domainator.Infrastructure.Repositories
 
             if (entity.State.IsUpdated)
             {
-                await _stateStorage.PersistAsync(entity.Id, entity.State, entity.Version, cancellationToken);
+                await _stateStorage.PersistAsync(entity.Id, (TAggregateState)entity.State, entity.Version, cancellationToken);
             }
         }
     }
