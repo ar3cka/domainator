@@ -11,7 +11,7 @@ namespace Domainator.UnitTests.Entities
         [AutoData]
         public void RestoreFromState_UpdatesStateAndVersionOfTheAggregate(
             [Frozen] AggregateVersion version,
-            [Frozen] TodoTaskState state,
+            [Frozen] TodoTask.AggregateState state,
             [Frozen] TodoTaskId id,
             TestableAbstractAggregateRoot entity)
         {

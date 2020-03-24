@@ -5,14 +5,14 @@ namespace Domainator.Entities
     /// <summary>
     /// A base implementation for aggregate roots
     /// </summary>
-    public class AbstractAggregateRoot<TEntityId, TAggregateState> : IAggregateRoot<TEntityId, TAggregateState>
+    public class AbstractAggregateRoot<TEntityId, TAggregateState> : IAggregateRoot
         where TEntityId : class, IEntityIdentity
         where TAggregateState : class, IAggregateState, new()
     {
         protected AbstractAggregateRoot()
         {
             Version = AggregateVersion.Emtpy;
-            State = new TAggregateState();
+            InternalState = new TAggregateState();
         }
 
         protected AbstractAggregateRoot(TEntityId id, AggregateVersion version, TAggregateState state)
@@ -20,16 +20,26 @@ namespace Domainator.Entities
             Require.NotNull(id, nameof(id));
             Require.NotNull(state, nameof(state));
 
-            Id = id;
+            InternalId = id;
+            InternalState = state;
             Version = version;
-            State = state;
         }
 
-        /// <inheritdoc />
-        public TEntityId Id { get; protected set; }
+        /// <summary>
+        /// Gets strongly typed unique identity of the aggregate root entity.
+        /// </summary>
+        protected TEntityId InternalId { get; set; }
+
+        /// <summary>
+        /// Gets strongly typed state of the aggregate.
+        /// </summary>
+        protected TAggregateState InternalState { get; }
 
         /// <inheritdoc />
-        public TAggregateState State { get; }
+        public IEntityIdentity Id => InternalId;
+
+        /// <inheritdoc />
+        public IAggregateState State => InternalState;
 
         /// <inheritdoc />
         public AggregateVersion Version { get; }

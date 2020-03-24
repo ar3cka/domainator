@@ -6,7 +6,14 @@ namespace Domainator.Demo.UnitTests.Domain
 {
     public class TodoTaskTests
     {
-        private readonly TodoTask _task = new TodoTask();
+        private readonly TodoTask.AggregateState _state;
+        private readonly TodoTask _task;
+
+        public TodoTaskTests()
+        {
+            _task = new TodoTask();
+            _state = (TodoTask.AggregateState)_task.State;
+        }
 
         [Theory]
         [AutoData]
@@ -16,8 +23,8 @@ namespace Domainator.Demo.UnitTests.Domain
             _task.Create(taskId, projectId);
 
             // assert
-            Assert.NotNull(_task.State.ProjectId);
-            Assert.Equal(projectId, _task.State.ProjectId);
+            Assert.NotNull(_state.ProjectId);
+            Assert.Equal(projectId, _state.ProjectId);
 
             Assert.Contains(
                 _task.State.GetChanges(),

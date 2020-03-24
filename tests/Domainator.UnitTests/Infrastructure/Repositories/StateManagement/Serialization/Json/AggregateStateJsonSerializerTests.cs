@@ -12,7 +12,7 @@ namespace Domainator.UnitTests.Infrastructure.Repositories.StateManagement.Seria
 
         [Theory]
         [AutoData]
-        public void SerializeObject_UsesIdPropertyValue(TodoTaskState state)
+        public void SerializeObject_UsesIdPropertyValue(TodoTask.AggregateState state)
         {
             // act
             var serializedObject = JObject.Parse(_serializer.Serialize(state));
@@ -24,13 +24,13 @@ namespace Domainator.UnitTests.Infrastructure.Repositories.StateManagement.Seria
 
         [Theory]
         [AutoData]
-        public void DeserializeObject_RestoresIdentityFromTheIdValue(TodoTaskState state)
+        public void DeserializeObject_RestoresIdentityFromTheIdValue(TodoTask.AggregateState state)
         {
             // arrange
             var serializedString = _serializer.Serialize(state);
 
             // act
-            var deserializedObject = _serializer.Deserialize<TodoTaskState>(serializedString);
+            var deserializedObject = _serializer.Deserialize<TodoTask.AggregateState>(serializedString);
 
             // assert
             Assert.Equal(state.ProjectId, deserializedObject.ProjectId);
