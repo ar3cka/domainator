@@ -47,6 +47,7 @@ jobs:
           command: |
               dotnet test tests/Domainator.UnitTests --no-build -c:Release /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
               dotnet test tests/Domainator.Demo.UnitTests --no-build -c:Release /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+              dotnet test tests/Domainator.Extensions.DependencyInjection.UnitTests --no-build -c:Release /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
 
       - run:
             name: Run integrartion tests
