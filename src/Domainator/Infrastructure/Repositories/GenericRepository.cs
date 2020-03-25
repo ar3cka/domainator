@@ -15,12 +15,12 @@ namespace Domainator.Infrastructure.Repositories
     /// <typeparam name="TAggregateState">The type of the state of of the aggregate.</typeparam>
     public class GenericRepository<TEntityId, TAggregateRoot, TAggregateState> : IRepository<TEntityId, TAggregateRoot>
         where TAggregateRoot: class, IAggregateRoot
-        where TAggregateState : IAggregateState
+        where TAggregateState : class, IAggregateState
         where TEntityId : class, IEntityIdentity
     {
-        private readonly IAggregateStateStorage<TAggregateState> _stateStorage;
+        private readonly IAggregateStateStorage _stateStorage;
 
-        public GenericRepository(IAggregateStateStorage<TAggregateState> stateStorage)
+        public GenericRepository(IAggregateStateStorage stateStorage)
         {
             Require.NotNull(stateStorage, nameof(stateStorage));
 
@@ -32,7 +32,7 @@ namespace Domainator.Infrastructure.Repositories
         {
             Require.NotNull(id, nameof(id));
 
-            var (version, state) = await _stateStorage.LoadAsync(id, cancellationToken);
+            var (version, state) = await _stateStorage.LoadAsync<TAggregateState>(id, cancellationToken);
             if (version == AggregateVersion.Emtpy)
             {
                 return null;

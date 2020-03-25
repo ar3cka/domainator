@@ -10,10 +10,9 @@ using Domainator.Utilities;
 namespace Domainator.Infrastructure.Repositories.StateManagement.Storage
 {
     /// <summary>
-    /// Provides the implementation of <see cref="IAggregateStateStorage{TState}"/> based on AWS DynamoDB.
+    /// Provides the implementation of <see cref="IAggregateStateStorage"/> based on AWS DynamoDB.
     /// </summary>
-    /// <typeparam name="TState"></typeparam>
-    public class DynamoDbAggregateStateStorage<TState> : IAggregateStateStorage<TState> where TState : class, IAggregateState
+    public class DynamoDbAggregateStateStorage : IAggregateStateStorage
     {
         private const string HeadSortKeyValue = "HEAD";
 
@@ -30,7 +29,8 @@ namespace Domainator.Infrastructure.Repositories.StateManagement.Storage
         }
 
         /// <inheritdoc />
-        public async Task<(AggregateVersion, TState)> LoadAsync(IEntityIdentity id, CancellationToken cancellationToken)
+        public async Task<(AggregateVersion, TState)> LoadAsync<TState>(IEntityIdentity id, CancellationToken cancellationToken)
+            where TState : class, IAggregateState
         {
             Require.NotNull(id, nameof(id));
 
@@ -49,7 +49,8 @@ namespace Domainator.Infrastructure.Repositories.StateManagement.Storage
         }
 
         /// <inheritdoc />
-        public async Task PersistAsync(IEntityIdentity id, TState state, AggregateVersion version, CancellationToken cancellationToken)
+        public async Task PersistAsync<TState>(IEntityIdentity id, TState state, AggregateVersion version, CancellationToken cancellationToken)
+            where TState : class, IAggregateState
         {
             Require.NotNull(id, nameof(id));
             Require.NotNull(state, nameof(state));

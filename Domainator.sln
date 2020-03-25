@@ -26,6 +26,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domainator.Aws.Infrastructu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domainator.Aws.IntegrationTests", "tests\Domainator.Aws.IntegrationTests\Domainator.Aws.IntegrationTests.csproj", "{D55D8D4D-FEE2-453C-8BBA-22265316DED0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domainator.Extensions.DependencyInjection", "src\Domainator.Extensions.DependencyInjection\Domainator.Extensions.DependencyInjection.csproj", "{24F9DF9D-831E-438E-87D9-C357CB990BD8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domainator.Extensions.DependencyInjection.UnitTests", "tests\Domainator.Extensions.DependencyInjection.UnitTests\Domainator.Extensions.DependencyInjection.UnitTests.csproj", "{AFE632D9-A4C5-42BA-9AD2-85CDD6D6B1CE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -111,6 +115,30 @@ Global
 		{D55D8D4D-FEE2-453C-8BBA-22265316DED0}.Release|x64.Build.0 = Release|Any CPU
 		{D55D8D4D-FEE2-453C-8BBA-22265316DED0}.Release|x86.ActiveCfg = Release|Any CPU
 		{D55D8D4D-FEE2-453C-8BBA-22265316DED0}.Release|x86.Build.0 = Release|Any CPU
+		{24F9DF9D-831E-438E-87D9-C357CB990BD8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24F9DF9D-831E-438E-87D9-C357CB990BD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24F9DF9D-831E-438E-87D9-C357CB990BD8}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{24F9DF9D-831E-438E-87D9-C357CB990BD8}.Debug|x64.Build.0 = Debug|Any CPU
+		{24F9DF9D-831E-438E-87D9-C357CB990BD8}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{24F9DF9D-831E-438E-87D9-C357CB990BD8}.Debug|x86.Build.0 = Debug|Any CPU
+		{24F9DF9D-831E-438E-87D9-C357CB990BD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24F9DF9D-831E-438E-87D9-C357CB990BD8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{24F9DF9D-831E-438E-87D9-C357CB990BD8}.Release|x64.ActiveCfg = Release|Any CPU
+		{24F9DF9D-831E-438E-87D9-C357CB990BD8}.Release|x64.Build.0 = Release|Any CPU
+		{24F9DF9D-831E-438E-87D9-C357CB990BD8}.Release|x86.ActiveCfg = Release|Any CPU
+		{24F9DF9D-831E-438E-87D9-C357CB990BD8}.Release|x86.Build.0 = Release|Any CPU
+		{AFE632D9-A4C5-42BA-9AD2-85CDD6D6B1CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AFE632D9-A4C5-42BA-9AD2-85CDD6D6B1CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AFE632D9-A4C5-42BA-9AD2-85CDD6D6B1CE}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{AFE632D9-A4C5-42BA-9AD2-85CDD6D6B1CE}.Debug|x64.Build.0 = Debug|Any CPU
+		{AFE632D9-A4C5-42BA-9AD2-85CDD6D6B1CE}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{AFE632D9-A4C5-42BA-9AD2-85CDD6D6B1CE}.Debug|x86.Build.0 = Debug|Any CPU
+		{AFE632D9-A4C5-42BA-9AD2-85CDD6D6B1CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AFE632D9-A4C5-42BA-9AD2-85CDD6D6B1CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AFE632D9-A4C5-42BA-9AD2-85CDD6D6B1CE}.Release|x64.ActiveCfg = Release|Any CPU
+		{AFE632D9-A4C5-42BA-9AD2-85CDD6D6B1CE}.Release|x64.Build.0 = Release|Any CPU
+		{AFE632D9-A4C5-42BA-9AD2-85CDD6D6B1CE}.Release|x86.ActiveCfg = Release|Any CPU
+		{AFE632D9-A4C5-42BA-9AD2-85CDD6D6B1CE}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{F7E24EAB-1894-4A75-9A02-7B1E130A7FF7} = {55AEFA5E-7318-4428-86C7-401D54B7151A}
@@ -119,5 +147,7 @@ Global
 		{1B571CBC-D197-4E5A-A420-9C21AD3E9882} = {F900C36D-F507-49F1-803A-767AB9B9A81D}
 		{0D65A15F-E771-4003-A0FE-CE7A1F67E623} = {55AEFA5E-7318-4428-86C7-401D54B7151A}
 		{D55D8D4D-FEE2-453C-8BBA-22265316DED0} = {F900C36D-F507-49F1-803A-767AB9B9A81D}
+		{24F9DF9D-831E-438E-87D9-C357CB990BD8} = {55AEFA5E-7318-4428-86C7-401D54B7151A}
+		{AFE632D9-A4C5-42BA-9AD2-85CDD6D6B1CE} = {F900C36D-F507-49F1-803A-767AB9B9A81D}
 	EndGlobalSection
 EndGlobal

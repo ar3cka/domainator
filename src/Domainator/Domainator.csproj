@@ -13,7 +13,7 @@
       <PackageLicenseUrl>https://raw.githubusercontent.com/ar3cka/domainator/master/LICENSE</PackageLicenseUrl>
       <RepositoryUrl>https://github.com/ar3cka/domainator</RepositoryUrl>
       <PackageTags>DDD;EventSourcing</PackageTags>
-      <Authors>ar3cka</Authors>
+      <Authors>Domainator Contributors</Authors>
     </PropertyGroup>
 
     <ItemGroup>

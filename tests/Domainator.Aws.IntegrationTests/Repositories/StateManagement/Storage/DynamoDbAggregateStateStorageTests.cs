@@ -11,11 +11,11 @@ namespace Domainator.Aws.IntegrationTests.Repositories.StateManagement.Storage
 {
     public class DynamoDbAggregateStateStorageTests : IClassFixture<AggregateStoreDynamoDbTableFixture>
     {
-        private readonly IAggregateStateStorage<TodoTask.AggregateState> _stateStorage;
+        private readonly IAggregateStateStorage _stateStorage;
 
         public DynamoDbAggregateStateStorageTests(AggregateStoreDynamoDbTableFixture fixture)
         {
-            _stateStorage = new DynamoDbAggregateStateStorage<TodoTask.AggregateState>(
+            _stateStorage = new DynamoDbAggregateStateStorage(
                 fixture.StoreTable,
                 new AggregateStateJsonSerializer());
         }
@@ -25,7 +25,7 @@ namespace Domainator.Aws.IntegrationTests.Repositories.StateManagement.Storage
         public async Task LoadAsync_WhenTheStateDoesNotExists_ReturnsEmptyVersion(TodoTaskId id)
         {
             // act
-            var (version, _) = await _stateStorage.LoadAsync(id, CancellationToken.None);
+            var (version, _) = await _stateStorage.LoadAsync<TodoTask.AggregateState>(id, CancellationToken.None);
 
             // assert
             Assert.True(AggregateVersion.IsEmpty(version));
@@ -39,7 +39,7 @@ namespace Domainator.Aws.IntegrationTests.Repositories.StateManagement.Storage
             await _stateStorage.PersistAsync(id, state, originalVersion, CancellationToken.None);
 
             // act
-            var (restoredVersion, restoredState) = await _stateStorage.LoadAsync(id, CancellationToken.None);
+            var (restoredVersion, restoredState) = await _stateStorage.LoadAsync<TodoTask.AggregateState>(id, CancellationToken.None);
 
             // assert
             Assert.Equal(state.ProjectId, restoredState.ProjectId);
@@ -60,7 +60,7 @@ namespace Domainator.Aws.IntegrationTests.Repositories.StateManagement.Storage
             await _stateStorage.PersistAsync(id, state, originalVersion, CancellationToken.None);
 
             // act
-            var (restoredVersion, restoredState) = await _stateStorage.LoadAsync(id, CancellationToken.None);
+            var (restoredVersion, restoredState) = await _stateStorage.LoadAsync<TodoTask.AggregateState>(id, CancellationToken.None);
 
             // assert
             Assert.Equal(state.ProjectId, restoredState.ProjectId);
