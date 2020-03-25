@@ -2,7 +2,7 @@ namespace Domainator.Demo.Domain.Domain
 {
     public enum TaskState
     {
-        Created,
-        Completed
+        Created = 0,
+        Completed = 1
     }
 }

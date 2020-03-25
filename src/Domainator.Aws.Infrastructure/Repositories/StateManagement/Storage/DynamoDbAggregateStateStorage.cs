@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Amazon.DynamoDBv2.DocumentModel;
@@ -49,28 +50,18 @@ namespace Domainator.Infrastructure.Repositories.StateManagement.Storage
         }
 
         /// <inheritdoc />
-        public async Task PersistAsync<TState>(IEntityIdentity id, TState state, AggregateVersion version, CancellationToken cancellationToken)
+        public async Task PersistAsync<TState>(
+            IEntityIdentity id, TState state, AggregateVersion version, IReadOnlyDictionary<string, object> attributes, CancellationToken cancellationToken)
             where TState : class, IAggregateState
         {
             Require.NotNull(id, nameof(id));
             Require.NotNull(state, nameof(state));
-
-            var stateVersion = version.Increment(state.GetChanges().Count);
+            Require.NotNull(attributes, nameof(attributes));
 
             var document = new Document();
-            document[KnownTableAttributes.AggregateType] = id.Tag;
-            document[KnownTableAttributes.PartitionKey] = ConvertToPrimaryKey(id);
-            document[KnownTableAttributes.SortKey] = HeadSortKeyValue;
-            document[KnownTableAttributes.Data] = _serializer.Serialize(state);
-            document[KnownTableAttributes.Version] = (int)stateVersion;
 
-            var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-            if (version == AggregateVersion.Emtpy)
-            {
-                document[KnownTableAttributes.CreatedAt] = now;
-            }
-
-            document[KnownTableAttributes.UpdatedAt] = now;
+            FillKnownAttributes(id, state, version, document);
+            FillCustomAttributes(attributes, document);
 
             var putConfig = new PutItemOperationConfig();
             putConfig.ExpectedState = new ExpectedState();
@@ -87,6 +78,86 @@ namespace Domainator.Infrastructure.Repositories.StateManagement.Storage
                 throw new StateWasConcurrentlyUpdatedException(
                     $"The version \"{version.ToString()}\" of the aggregate state \"{id}\" is not the latest",
                     exception);
+            }
+        }
+
+        private void FillKnownAttributes<TState>(IEntityIdentity id, TState state, AggregateVersion version,
+            Document document) where TState : class, IAggregateState
+        {
+            var stateVersion = version.Increment(state.GetChanges().Count);
+            document[KnownTableAttributes.AggregateType] = id.Tag;
+            document[KnownTableAttributes.PartitionKey] = ConvertToPrimaryKey(id);
+            document[KnownTableAttributes.SortKey] = HeadSortKeyValue;
+            document[KnownTableAttributes.Data] = _serializer.Serialize(state);
+            document[KnownTableAttributes.Version] = (int)stateVersion;
+
+            var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            if (version == AggregateVersion.Emtpy)
+            {
+                document[KnownTableAttributes.CreatedAt] = now;
+            }
+
+            document[KnownTableAttributes.UpdatedAt] = now;
+        }
+
+        private static void FillCustomAttributes(IReadOnlyDictionary<string, object> attributes, Document document)
+        {
+            foreach (var attribute in attributes)
+            {
+                switch (Type.GetTypeCode(attribute.Value.GetType()))
+                {
+                    case TypeCode.Boolean:
+                        document[attribute.Key] = (bool)attribute.Value;
+                        break;
+                    case TypeCode.Byte:
+                        document[attribute.Key] = (byte)attribute.Value;
+                        break;
+                    case TypeCode.Char:
+                        document[attribute.Key] = (char)attribute.Value;
+                        break;
+                    case TypeCode.DateTime:
+                        document[attribute.Key] = (DateTime)attribute.Value;
+                        break;
+                    case TypeCode.Decimal:
+                        document[attribute.Key] = (decimal)attribute.Value;
+                        break;
+                    case TypeCode.Double:
+                        document[attribute.Key] = (double)attribute.Value;
+                        break;
+                    case TypeCode.Int16:
+                        document[attribute.Key] = (short)attribute.Value;
+                        break;
+                    case TypeCode.Int32:
+                        document[attribute.Key] = (int)attribute.Value;
+                        break;
+                    case TypeCode.Int64:
+                        document[attribute.Key] = (long)attribute.Value;
+                        break;
+                    case TypeCode.SByte:
+                        document[attribute.Key] = (sbyte)attribute.Value;
+                        break;
+                    case TypeCode.Single:
+                        document[attribute.Key] = (float)attribute.Value;
+                        break;
+                    case TypeCode.String:
+                        document[attribute.Key] = (string)attribute.Value;
+                        break;
+                    case TypeCode.UInt16:
+                        document[attribute.Key] = (ushort)attribute.Value;
+                        break;
+                    case TypeCode.UInt32:
+                        document[attribute.Key] = (uint)attribute.Value;
+                        break;
+                    case TypeCode.UInt64:
+                        document[attribute.Key] = (ulong)attribute.Value;
+                        break;
+                    case TypeCode.DBNull:
+                    case TypeCode.Empty:
+                        // skip null values
+                        break;
+                    default:
+                        throw new InvalidOperationException($"Custom attributes of type {attribute.Value.GetType()} are not supported.");
+                }
             }
         }
 

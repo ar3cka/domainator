@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Domainator.Demo.Domain.Domain;
@@ -35,7 +36,7 @@ namespace Domainator.Aws.IntegrationTests.Repositories.StateManagement.Storage
         public async Task LoadAsync_CanReadPersistedState(TodoTaskId id, AggregateVersion originalVersion, TodoTask.AggregateState state)
         {
             // arrange
-            await _stateStorage.PersistAsync(id, state, originalVersion, CancellationToken.None);
+            await _stateStorage.PersistAsync(id, state, originalVersion, new Dictionary<string, object>(), CancellationToken.None);
 
             // act
             var (restoredVersion, restoredState) = await _stateStorage.LoadAsync<TodoTask.AggregateState>(id, CancellationToken.None);
@@ -56,7 +57,7 @@ namespace Domainator.Aws.IntegrationTests.Repositories.StateManagement.Storage
             // arrange
             state.Mutate(todoTaskCreated);
 
-            await _stateStorage.PersistAsync(id, state, originalVersion, CancellationToken.None);
+            await _stateStorage.PersistAsync(id, state, originalVersion, new Dictionary<string, object>(), CancellationToken.None);
 
             // act
             var (restoredVersion, restoredState) = await _stateStorage.LoadAsync<TodoTask.AggregateState>(id, CancellationToken.None);
@@ -74,11 +75,11 @@ namespace Domainator.Aws.IntegrationTests.Repositories.StateManagement.Storage
             TodoTask.AggregateState state)
         {
             // arrange
-            await _stateStorage.PersistAsync(id, state, originalVersion.Increment(), CancellationToken.None);
+            await _stateStorage.PersistAsync(id, state, originalVersion.Increment(), new Dictionary<string, object>(), CancellationToken.None);
 
             // act && assert
             await Assert.ThrowsAsync<StateWasConcurrentlyUpdatedException>(
-                () => _stateStorage.PersistAsync(id, state, originalVersion, CancellationToken.None));
+                () => _stateStorage.PersistAsync(id, state, originalVersion, new Dictionary<string, object>(), CancellationToken.None));
         }
     }
 }
