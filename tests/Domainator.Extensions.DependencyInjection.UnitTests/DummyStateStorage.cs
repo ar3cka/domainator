@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Domainator.Entities;
@@ -14,8 +15,8 @@ namespace Domainator.Extensions.DependencyInjection.UnitTests
             return Task.FromResult<ValueTuple<AggregateVersion, TState>>((AggregateVersion.Emtpy, default));
         }
 
-        public Task PersistAsync<TState>(IEntityIdentity id, TState state, AggregateVersion version, CancellationToken cancellationToken)
-            where TState : class, IAggregateState
+        public Task PersistAsync<TState>(IEntityIdentity id, TState state, AggregateVersion version, IReadOnlyDictionary<string, object> attributes,
+            CancellationToken cancellationToken) where TState : class, IAggregateState
         {
             return Task.CompletedTask;
         }

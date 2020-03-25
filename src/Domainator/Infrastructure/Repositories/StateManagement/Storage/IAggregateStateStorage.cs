@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Domainator.Entities;
@@ -27,11 +28,13 @@ namespace Domainator.Infrastructure.Repositories.StateManagement.Storage
         /// <param name="id">The unique identifier of the aggregate root.</param>
         /// <param name="state">The state to persist.</param>
         /// <param name="version">The current version of the state.</param>
+        /// <param name="attributes">The custom attributes of the state.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <typeparam name="TState">The type of the aggregate state.</typeparam>
         /// <exception cref="StateWasConcurrentlyUpdatedException">The exception is thrown in case the version of
         /// the state does not match with <see cref="version"/>.</exception>
-        Task PersistAsync<TState>(IEntityIdentity id, TState state, AggregateVersion version, CancellationToken cancellationToken)
+        Task PersistAsync<TState>(
+            IEntityIdentity id, TState state, AggregateVersion version, IReadOnlyDictionary<string, object> attributes, CancellationToken cancellationToken)
             where TState : class, IAggregateState;
 
     }

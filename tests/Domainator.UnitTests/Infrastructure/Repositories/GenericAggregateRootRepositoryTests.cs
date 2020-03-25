@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoFixture.Xunit2;
@@ -86,7 +87,12 @@ namespace Domainator.UnitTests.Infrastructure.Repositories
 
             // assert
             stateStorageMock.Verify(
-                self => self.PersistAsync(task.Id, (TodoTask.AggregateState)task.State, task.Version, It.IsAny<CancellationToken>()),
+                self => self.PersistAsync(
+                    task.Id,
+                    (TodoTask.AggregateState)task.State,
+                    task.Version,
+                    It.Is<IReadOnlyDictionary<string, object>>(attributes => attributes.Count == 0),
+                    It.IsAny<CancellationToken>()),
                 Times.Once);
         }
 
@@ -102,7 +108,12 @@ namespace Domainator.UnitTests.Infrastructure.Repositories
 
             // assert
             stateStorageMock.Verify(
-                self => self.PersistAsync(task.Id, (TodoTask.AggregateState)task.State, task.Version, It.IsAny<CancellationToken>()),
+                self => self.PersistAsync(
+                    task.Id,
+                    (TodoTask.AggregateState)task.State,
+                    task.Version,
+                    It.Is<IReadOnlyDictionary<string, object>>(attributes => attributes.Count == 0),
+                    It.IsAny<CancellationToken>()),
                 Times.Never);
         }
     }

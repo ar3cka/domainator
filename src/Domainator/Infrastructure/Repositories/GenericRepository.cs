@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Domainator.Entities;
@@ -18,13 +19,15 @@ namespace Domainator.Infrastructure.Repositories
         where TAggregateState : class, IAggregateState
         where TEntityId : class, IEntityIdentity
     {
-        private readonly IAggregateStateStorage _stateStorage;
+        private static readonly IReadOnlyDictionary<string, object> EmptyAttributes = new Dictionary<string, object>(0);
+
+        protected IAggregateStateStorage StateStorage { get; }
 
         public GenericRepository(IAggregateStateStorage stateStorage)
         {
             Require.NotNull(stateStorage, nameof(stateStorage));
 
-            _stateStorage = stateStorage;
+            StateStorage = stateStorage;
         }
 
         /// <inheritdoc />
@@ -32,7 +35,7 @@ namespace Domainator.Infrastructure.Repositories
         {
             Require.NotNull(id, nameof(id));
 
-            var (version, state) = await _stateStorage.LoadAsync<TAggregateState>(id, cancellationToken);
+            var (version, state) = await StateStorage.LoadAsync<TAggregateState>(id, cancellationToken);
             if (version == AggregateVersion.Emtpy)
             {
                 return null;
@@ -62,8 +65,18 @@ namespace Domainator.Infrastructure.Repositories
 
             if (entity.State.IsUpdated)
             {
-                await _stateStorage.PersistAsync(entity.Id, (TAggregateState)entity.State, entity.Version, cancellationToken);
+                await StateStorage.PersistAsync(
+                    id: entity.Id,
+                    state: (TAggregateState)entity.State,
+                    version: entity.Version,
+                    attributes: ExtractCustomAttributes((TAggregateState)entity.State),
+                    cancellationToken: cancellationToken);
             }
+        }
+
+        protected virtual IReadOnlyDictionary<string, object> ExtractCustomAttributes(TAggregateState state)
+        {
+            return EmptyAttributes;
         }
     }
 }
