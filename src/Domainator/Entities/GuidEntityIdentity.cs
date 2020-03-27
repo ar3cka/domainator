@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 
 namespace Domainator.Entities
 {
@@ -8,7 +9,7 @@ namespace Domainator.Entities
     public abstract class GuidEntityIdentity : AbstractEntityIdentity<Guid>
     {
         /// <inheritdoc />
-        public override string Value => Id.ToString("D");
+        public override string Value => Id.ToString("D", CultureInfo.InvariantCulture);
 
         /// <inheritdoc />
         protected GuidEntityIdentity(IEntityIdentity identity) : base(identity)
