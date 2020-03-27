@@ -1,23 +1,19 @@
 using AutoFixture;
 using AutoFixture.AutoMoq;
-using AutoFixture.Kernel;
 using AutoFixture.Xunit2;
 using Domainator.Demo.Domain.Domain;
 
-namespace Domainator.UnitTests.Infrastructure.Repositories
+namespace Domainator.Demo.UnitTests.Domain
 {
-    public sealed class GenericAggregateRootRepositoryTestsDataAttribute : AutoDataAttribute
+    public sealed class TodoTaskTestsDataAttribute : AutoDataAttribute
     {
-        public GenericAggregateRootRepositoryTestsDataAttribute() : base(CustomizeFixture)
+        public TodoTaskTestsDataAttribute() : base(CustomizeFixture)
         {
         }
 
         private static IFixture CustomizeFixture()
         {
             var fixture = new Fixture().Customize(new AutoMoqCustomization {ConfigureMembers = true});
-
-            fixture.Customize<TodoTask>(c => c.FromFactory(
-                new MethodInvoker(new GreedyConstructorQuery())));
 
             fixture.Register((int id) => new TodoTaskId(id));
             fixture.Register((int id) => new ProjectId(id));

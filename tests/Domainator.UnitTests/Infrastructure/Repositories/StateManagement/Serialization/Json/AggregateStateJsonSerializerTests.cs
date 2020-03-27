@@ -1,4 +1,3 @@
-using AutoFixture.Xunit2;
 using Domainator.Demo.Domain.Domain;
 using Domainator.Infrastructure.Repositories.StateManagement.Serialization.Json;
 using Newtonsoft.Json.Linq;
@@ -11,7 +10,7 @@ namespace Domainator.UnitTests.Infrastructure.Repositories.StateManagement.Seria
         private readonly AggregateStateJsonSerializer _serializer = new AggregateStateJsonSerializer();
 
         [Theory]
-        [AutoData]
+        [AggregateStateJsonSerializerTestsData]
         public void SerializeObject_UsesIdPropertyValue(TodoTask.AggregateState state)
         {
             // act
@@ -23,7 +22,7 @@ namespace Domainator.UnitTests.Infrastructure.Repositories.StateManagement.Seria
         }
 
         [Theory]
-        [AutoData]
+        [AggregateStateJsonSerializerTestsData]
         public void DeserializeObject_RestoresIdentityFromTheIdValue(TodoTask.AggregateState state)
         {
             // arrange
@@ -33,7 +32,7 @@ namespace Domainator.UnitTests.Infrastructure.Repositories.StateManagement.Seria
             var deserializedObject = _serializer.Deserialize<TodoTask.AggregateState>(serializedString);
 
             // assert
-            Assert.Equal(state.ProjectId, deserializedObject.ProjectId);
+            Assert.Equal(state.ProjectId.Id, deserializedObject.ProjectId.Id);
         }
     }
 }

@@ -16,7 +16,7 @@ namespace Domainator.Demo.UnitTests.Domain
         }
 
         [Theory]
-        [AutoData]
+        [TodoTaskTestsData]
         public void WhenTodoTaskCreated_ProjectIdPropertyReturnsTheCorrectValue(TodoTaskId taskId, ProjectId projectId)
         {
             // act
@@ -35,7 +35,7 @@ namespace Domainator.Demo.UnitTests.Domain
         }
 
         [Theory]
-        [AutoData]
+        [TodoTaskTestsData]
         public void WhenTodoTaskCreated_TaskIdPropertyReturnsTheCorrectValue(
             [Frozen] TodoTaskId taskId, ProjectId projectId)
         {
@@ -48,7 +48,7 @@ namespace Domainator.Demo.UnitTests.Domain
         }
 
         [Theory]
-        [AutoData]
+        [TodoTaskTestsData]
         public void WhenTodoTaskCreated_CorrespondingEventIsGenerated(TodoTaskId taskId, ProjectId projectId)
         {
             // act

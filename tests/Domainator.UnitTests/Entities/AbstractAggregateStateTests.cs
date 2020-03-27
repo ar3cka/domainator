@@ -8,7 +8,7 @@ namespace Domainator.UnitTests.Entities
     public class AbstractAggregateStateTests
     {
         [Theory]
-        [AutoData]
+        [AbstractAggregateStateTestsData]
         public void RestoreFromState_UpdatesStateAndVersionOfTheAggregate(
             [Frozen] AggregateVersion version,
             [Frozen] TodoTask.AggregateState state,
