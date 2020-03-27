@@ -43,7 +43,7 @@ namespace Domainator.UnitTests.Entities
 
         [Theory]
         [AbstractEntityIdentityTestsData]
-        public void Constructor_WhenTagIsDifferent_ThrowsArgumentException(Mock<IEntityIdentity> identity, int id)
+        public void Constructor_WhenTagIsDifferent_ThrowsArgumentException(Mock<IEntityIdentity> identity)
         {
             // act && assert
             Assert.Throws<ArgumentException>(() => new TodoTaskId(identity.Object));

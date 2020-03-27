@@ -19,8 +19,8 @@ namespace Domainator.Entities
         /// </summary>
         protected AbstractEntityIdentity(IEntityIdentity identity)
         {
-            Require.True(
-                identity.Tag.Equals(Tag, StringComparison.Ordinal), nameof(identity), "Invalid identity.Tag value");
+            Require.NotNull(identity, nameof(identity));
+            Require.True(identity.Tag.Equals(Tag, StringComparison.Ordinal), nameof(identity), "Invalid identity.Tag value");
 
             Id = ParseIdValue(identity.Value);
         }
