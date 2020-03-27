@@ -30,6 +30,11 @@ namespace Domainator.Utilities
             False(string.IsNullOrEmpty(paramValue), paramName, "Value must be not empty.");
         }
 
+        public static void NotEmpty(Guid paramValue, string paramName)
+        {
+            False(paramValue == Guid.Empty, paramName, "Value must be not empty.");
+        }
+
         public static void True(bool condition, string paramName, string message)
         {
             if (!condition)
