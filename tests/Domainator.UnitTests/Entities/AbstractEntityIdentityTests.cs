@@ -1,4 +1,3 @@
-using AutoFixture.Xunit2;
 using Domainator.Demo.Domain.Domain;
 using Domainator.Entities;
 using Xunit;
@@ -8,7 +7,7 @@ namespace Domainator.UnitTests.Entities
     public class AbstractEntityIdentityTests
     {
         [Theory]
-        [AutoData]
+        [AbstractEntityIdentityTestsData]
         public void Equals_ForTheSameTaskReturnsTrue(TodoTaskId taskId)
         {
             Assert.Equal(taskId, taskId);
@@ -18,7 +17,7 @@ namespace Domainator.UnitTests.Entities
         }
 
         [Theory]
-        [AutoData]
+        [AbstractEntityIdentityTestsData]
         public void Equals_ForDifferentTasksReturnsFalse(TodoTaskId task1, TodoTaskId task2)
         {
             Assert.NotEqual(task1, task2);
@@ -28,7 +27,7 @@ namespace Domainator.UnitTests.Entities
         }
 
         [Theory]
-        [AutoData]
+        [AbstractEntityIdentityTestsData]
         public void Equals_ForDifferentAbstractEntityIdentitySubTypesReturnsFalse(TodoTaskId task, ProjectId project)
         {
             var taskIdentity = task as AbstractEntityIdentity<int>;
@@ -41,7 +40,7 @@ namespace Domainator.UnitTests.Entities
         }
 
         [Theory]
-        [AutoData]
+        [AbstractEntityIdentityTestsData]
         public void Equals_ForDifferentEntityIdentityTypesReturnsFalse(TodoTaskId task, ProjectId project)
         {
             var taskIdentity = task as IEntityIdentity;
@@ -52,7 +51,7 @@ namespace Domainator.UnitTests.Entities
         }
 
         [Theory]
-        [AutoData]
+        [AbstractEntityIdentityTestsData]
         public void Equals_ForTheSameInstanceReturnsTrue(TodoTaskId task)
         {
             Assert.Equal(task, task);
@@ -60,7 +59,7 @@ namespace Domainator.UnitTests.Entities
         }
 
         [Theory]
-        [AutoData]
+        [AbstractEntityIdentityTestsData]
         public void Equals_WhenTheValueIsComparedWithNull_ReturnsFalse(TodoTaskId task)
         {
             Assert.False(task.Equals(null));

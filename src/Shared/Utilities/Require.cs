@@ -30,6 +30,14 @@ namespace Domainator.Utilities
             False(string.IsNullOrEmpty(paramValue), paramName, "Value must be not empty.");
         }
 
+        public static void True(bool condition, string paramName, string message)
+        {
+            if (!condition)
+            {
+                throw new ArgumentException(message, paramName);
+            }
+        }
+
         public static void False(bool condition, string paramName, string message)
         {
             if (condition)

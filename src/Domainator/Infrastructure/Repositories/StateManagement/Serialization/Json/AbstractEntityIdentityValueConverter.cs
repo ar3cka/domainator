@@ -10,6 +10,9 @@ namespace Domainator.Infrastructure.Repositories.StateManagement.Serialization.J
 {
     internal class AbstractEntityIdentityValueConverter : JsonConverter
     {
+        private static readonly ConcurrentDictionary<Type, IdentityTypeConverterImpl> _converters = new ConcurrentDictionary<Type,IdentityTypeConverterImpl>();
+        private static readonly ConcurrentDictionary<Type, bool> _supportedTypes = new ConcurrentDictionary<Type, bool>();
+
         private class IdentityTypeConverterImpl
         {
             private readonly PropertyInfo _idProperty;
@@ -38,8 +41,6 @@ namespace Domainator.Infrastructure.Repositories.StateManagement.Serialization.J
             }
         }
 
-        private static readonly ConcurrentDictionary<Type, IdentityTypeConverterImpl> _converters = new ConcurrentDictionary<Type,IdentityTypeConverterImpl>();
-
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
             Require.NotNull(writer, nameof(writer));
@@ -64,13 +65,24 @@ namespace Domainator.Infrastructure.Repositories.StateManagement.Serialization.J
         {
             Require.NotNull(objectType, nameof(objectType));
 
-            if (typeof(IEntityIdentity).IsAssignableFrom(objectType) &&
-                objectType.BaseType != null &&
-                objectType.BaseType.IsConstructedGenericType)
-            {
-                var genericTypeDefinition = objectType.BaseType.GetGenericTypeDefinition();
+            return _supportedTypes.GetOrAdd(objectType, CanConvertInternal);
+        }
 
-                return genericTypeDefinition == typeof(AbstractEntityIdentity<>);
+        private static bool CanConvertInternal(Type objectType)
+        {
+            if (typeof(IEntityIdentity).IsAssignableFrom(objectType))
+            {
+                var baseType = objectType.BaseType;
+                while (baseType != null)
+                {
+                    if (baseType.IsConstructedGenericType)
+                    {
+                        var genericTypeDefinition = baseType.GetGenericTypeDefinition();
+                        return genericTypeDefinition == typeof(AbstractEntityIdentity<>);
+                    }
+
+                    baseType = baseType.BaseType;
+                }
             }
 
             return false;

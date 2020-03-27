@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using Domainator.Utilities;
 
 namespace Domainator.Entities
 {
@@ -11,10 +12,34 @@ namespace Domainator.Entities
     /// <typeparam name="TKey">The type of scalar type.</typeparam>
     public abstract class AbstractEntityIdentity<TKey> : IEntityIdentity, IEquatable<AbstractEntityIdentity<TKey>>
     {
+        /// <summary>
+        /// The constructor is used for restoring the instance of <see cref="AbstractEntityIdentity{TKey}"/>
+        /// from provided <see cref="IEntityIdentity"/>. It is used during restoring aggregates from persistence
+        /// storage.
+        /// </summary>
+        protected AbstractEntityIdentity(IEntityIdentity identity)
+        {
+            Require.True(
+                identity.Tag.Equals(Tag, StringComparison.Ordinal), nameof(identity), "Invalid identity.Tag value");
+
+            Id = ParseIdValue(identity.Value);
+        }
+
+        /// <summary>
+        /// The constructor is used for creating new value of <see cref="AbstractEntityIdentity{TKey}"/>.
+        /// </summary>
+        /// <param name="id"></param>
         protected AbstractEntityIdentity(TKey id)
         {
             Id = id;
         }
+
+        /// <summary>
+        /// Parse received value from <see cref="IEntityIdentity.Value"/> back to <see cref="Id"/>.
+        /// </summary>
+        /// <param name="identityValue"></param>
+        /// <returns></returns>
+        protected abstract TKey ParseIdValue(string identityValue);
 
         /// <summary>
         /// Gets internal value of the identity as CLR type.

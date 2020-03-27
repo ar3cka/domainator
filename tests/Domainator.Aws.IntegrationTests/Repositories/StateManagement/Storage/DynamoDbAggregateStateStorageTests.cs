@@ -1,6 +1,5 @@
 using System.Threading;
 using System.Threading.Tasks;
-using AutoFixture.Xunit2;
 using Domainator.Demo.Domain.Domain;
 using Domainator.Entities;
 using Domainator.Infrastructure.Repositories.StateManagement.Serialization.Json;
@@ -21,7 +20,7 @@ namespace Domainator.Aws.IntegrationTests.Repositories.StateManagement.Storage
         }
 
         [Theory]
-        [AutoData]
+        [DynamoDbAggregateStateStorageTestsData]
         public async Task LoadAsync_WhenTheStateDoesNotExists_ReturnsEmptyVersion(TodoTaskId id)
         {
             // act
@@ -32,7 +31,7 @@ namespace Domainator.Aws.IntegrationTests.Repositories.StateManagement.Storage
         }
 
         [Theory]
-        [AutoData]
+        [DynamoDbAggregateStateStorageTestsData]
         public async Task LoadAsync_CanReadPersistedState(TodoTaskId id, AggregateVersion originalVersion, TodoTask.AggregateState state)
         {
             // arrange
@@ -47,7 +46,7 @@ namespace Domainator.Aws.IntegrationTests.Repositories.StateManagement.Storage
         }
 
         [Theory]
-        [AutoData]
+        [DynamoDbAggregateStateStorageTestsData]
         public async Task LoadAsync_WhenStateHasChanges_IncrementsVersion(
             TodoTaskId id,
             TodoTaskCreated todoTaskCreated,
@@ -68,7 +67,7 @@ namespace Domainator.Aws.IntegrationTests.Repositories.StateManagement.Storage
         }
 
         [Theory]
-        [AutoData]
+        [DynamoDbAggregateStateStorageTestsData]
         public async Task LoadAsync_WhenStageWasUpdatedConcurrently_Throws(
             TodoTaskId id,
             AggregateVersion originalVersion,
