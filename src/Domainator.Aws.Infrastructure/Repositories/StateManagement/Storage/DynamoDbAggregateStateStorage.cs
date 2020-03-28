@@ -148,7 +148,7 @@ namespace Domainator.Infrastructure.Repositories.StateManagement.Storage
         }
 
         private void FillKnownAttributes<TState>(
-            IEntityIdentity id, TState state, AggregateVersion version, Document document)
+            IEntityIdentity id, TState state, AggregateVersion version, IDictionary<string, DynamoDBEntry> document)
             where TState : class, IAggregateState
         {
             var stateVersion = version.Increment(state.GetChanges().Count);
