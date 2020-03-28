@@ -41,8 +41,6 @@ namespace Domainator.Infrastructure.Repositories.StateManagement.Storage
         public FindByAttributeValueStateQuery(string attributeName, object attributeValue, int limit, string paginationToken)
             : this(attributeName, attributeValue, limit)
         {
-            Require.NotEmpty(paginationToken, nameof(paginationToken));
-
             PaginationToken = paginationToken;
         }
     }

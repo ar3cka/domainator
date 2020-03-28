@@ -168,7 +168,7 @@ namespace Domainator.Infrastructure.Repositories.StateManagement.Storage
             document[KnownTableAttributes.UpdatedAt] = now;
         }
 
-        private static void FillCustomAttributes(IReadOnlyDictionary<string, object> attributes, Document document)
+        private static void FillCustomAttributes(IReadOnlyDictionary<string, object> attributes, IDictionary<string, DynamoDBEntry> document)
         {
             foreach (var attribute in attributes)
             {

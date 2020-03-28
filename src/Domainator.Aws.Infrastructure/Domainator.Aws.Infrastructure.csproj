@@ -25,6 +25,9 @@
     <Compile Include="..\Shared\Properties\AssemblyInfo.cs">
       <Link>Properties/AssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="..\Shared\Utilities\EmptyDictionary.cs">
+      <Link>Utilities\EmptyDictionary.cs</Link>
+    </Compile>
     <Compile Include="..\Shared\Utilities\Require.cs">
       <Link>Utilities/Require.cs</Link>
     </Compile>

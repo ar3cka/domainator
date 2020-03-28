@@ -31,6 +31,9 @@
       <Compile Include="..\Shared\Utilities\Ensure.cs">
         <Link>Utilities/Ensure.cs</Link>
       </Compile>
+      <Compile Include="..\Shared\Utilities\EmptyDictionary.cs">
+        <Link>Utilities/EmptyDictionary.cs</Link>
+      </Compile>
     </ItemGroup>
   
 </Project>

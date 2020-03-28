@@ -19,15 +19,13 @@ namespace Domainator.Infrastructure.Repositories
         where TAggregateState : class, IAggregateState
         where TEntityId : class, IEntityIdentity
     {
-        private static readonly IReadOnlyDictionary<string, object> EmptyAttributes = new Dictionary<string, object>(0);
-
-        protected IAggregateStateStorage StateStorage { get; }
+        private readonly IAggregateStateStorage _stateStorage;
 
         public GenericRepository(IAggregateStateStorage stateStorage)
         {
             Require.NotNull(stateStorage, nameof(stateStorage));
 
-            StateStorage = stateStorage;
+            _stateStorage = stateStorage;
         }
 
         /// <inheritdoc />
@@ -35,13 +33,13 @@ namespace Domainator.Infrastructure.Repositories
         {
             Require.NotNull(id, nameof(id));
 
-            var (version, state) = await StateStorage.LoadAsync<TAggregateState>(id, cancellationToken);
+            var (version, state) = await _stateStorage.LoadAsync<TAggregateState>(id, cancellationToken);
             if (version == AggregateVersion.Emtpy)
             {
                 return null;
             }
 
-            return (TAggregateRoot)Activator.CreateInstance(typeof(TAggregateRoot), id, version, state);
+            return CreateAggregateInstance(id, version, state);
         }
 
         /// <inheritdoc />
@@ -65,7 +63,7 @@ namespace Domainator.Infrastructure.Repositories
 
             if (entity.State.IsUpdated)
             {
-                await StateStorage.PersistAsync(
+                await _stateStorage.PersistAsync(
                     id: entity.Id,
                     state: (TAggregateState)entity.State,
                     version: entity.Version,
@@ -76,7 +74,28 @@ namespace Domainator.Infrastructure.Repositories
 
         protected virtual IReadOnlyDictionary<string, object> ExtractCustomAttributes(TAggregateState state)
         {
-            return EmptyAttributes;
+            return EmptyDictionary<string, object>.Instance;
         }
+
+        protected async Task<RepositoryQueryResult<TAggregateRoot>> FindByAttributeValueAsync(
+            FindByAttributeValueStateQuery query, CancellationToken cancellationToken)
+        {
+            Require.NotNull(query, nameof(query));
+
+            var queryResult = await _stateStorages.FindByAttributeValueAsync<TAggregateState>(query, cancellationToken);
+            var items = new List<TAggregateRoot>(queryResult.States.Count);
+            foreach (var restoredState in queryResult.States)
+            {
+                var id = (TEntityId)Activator.CreateInstance(typeof(TEntityId), restoredState.Key);
+                var (version, state) = restoredState.Value;
+
+                items.Add(CreateAggregateInstance(id, version, state));
+            }
+
+            return new RepositoryQueryResult<TAggregateRoot>(items, queryResult.PaginationToken);
+        }
+
+        private static TAggregateRoot CreateAggregateInstance(TEntityId id, AggregateVersion version, TAggregateState state) =>
+            (TAggregateRoot)Activator.CreateInstance(typeof(TAggregateRoot), id, version, state);
     }
 }
