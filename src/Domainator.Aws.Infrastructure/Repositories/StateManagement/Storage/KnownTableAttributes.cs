@@ -6,6 +6,7 @@ namespace Domainator.Infrastructure.Repositories.StateManagement.Storage
         public static readonly string SortKey = "SK";
         public static readonly string Data = "Data";
         public static readonly string Version = "Version";
+        public static readonly string AggregateId = "AggregateId";
         public static readonly string AggregateType = "AggregateType";
         public static readonly string CreatedAt = "CreatedAt";
         public static readonly string UpdatedAt = "UpdatedAt";

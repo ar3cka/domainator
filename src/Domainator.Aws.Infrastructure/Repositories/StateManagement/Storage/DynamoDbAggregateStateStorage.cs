@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Amazon.DynamoDBv2.DocumentModel;
@@ -50,6 +51,71 @@ namespace Domainator.Infrastructure.Repositories.StateManagement.Storage
         }
 
         /// <inheritdoc />
+        public async Task<IReadOnlyDictionary<IEntityIdentity, (AggregateVersion, TState)>> LoadBatchAsync<TState>(
+            IReadOnlyCollection<IEntityIdentity> ids, CancellationToken cancellationToken)
+            where TState : class, IAggregateState
+        {
+            Require.NotNull(ids, nameof(ids));
+
+            var batchGet = _dynamoDbTable.CreateBatchGet();
+            batchGet.ConsistentRead = true;
+
+            var idToValueMap = new Dictionary<string, IEntityIdentity>(ids.Count);
+            foreach (var id in ids)
+            {
+                batchGet.AddKey(ConvertToPrimaryKey(id), HeadSortKeyValue);
+                idToValueMap[id.Value] = id;
+            }
+
+            await batchGet.ExecuteAsync(cancellationToken);
+
+            var results = new Dictionary<IEntityIdentity, (AggregateVersion, TState)>(ids.Count, EntityIdentity.DefaultComparer);
+            foreach (var document in batchGet.Results)
+            {
+                var aggregateId = (string)document[KnownTableAttributes.AggregateId];
+                var version = (int)document[KnownTableAttributes.Version];
+                var data = (string)document[KnownTableAttributes.Data];
+                var state = _serializer.Deserialize<TState>(data);
+
+                results[idToValueMap[aggregateId]] = (AggregateVersion.Create(version), state);
+            }
+
+            return results;
+        }
+
+        /// <inheritdoc />
+        public async Task<FindByAttributeValueStateQueryResult<TState>> FindByAttributeValueAsync<TState>(
+            FindByAttributeValueStateQuery query, CancellationToken cancellationToken)
+            where TState : class, IAggregateState
+        {
+            Require.NotNull(query, nameof(query));
+
+            var filter = new QueryFilter();
+            filter.AddCondition(query.AttributeName, QueryOperator.Equal, MapValueToDynamoDbEntry(query.AttributeValue));
+
+            var search = _dynamoDbTable.Query(new QueryOperationConfig
+            {
+                IndexName = $"{query.AttributeName}Index",
+                Filter = filter,
+                Limit = query.Limit,
+                PaginationToken = string.IsNullOrEmpty(query.PaginationToken) ? null : query.PaginationToken
+            });
+
+            var searchResults = await search.GetNextSetAsync(cancellationToken);
+            var identities = new List<IEntityIdentity>(searchResults.Count);
+            identities.AddRange(searchResults.Select(item =>
+            {
+                string aggregateType = item[KnownTableAttributes.AggregateType];
+                string aggregateId = item[KnownTableAttributes.AggregateId];
+                return new EntityIdentity(aggregateType, aggregateId);
+            }));
+
+            var states = await LoadBatchAsync<TState>(identities, cancellationToken);
+
+            return new FindByAttributeValueStateQueryResult<TState>(states, search.IsDone ? null : search.PaginationToken);
+        }
+
+        /// <inheritdoc />
         public async Task PersistAsync<TState>(
             IEntityIdentity id, TState state, AggregateVersion version, IReadOnlyDictionary<string, object> attributes, CancellationToken cancellationToken)
             where TState : class, IAggregateState
@@ -81,10 +147,12 @@ namespace Domainator.Infrastructure.Repositories.StateManagement.Storage
             }
         }
 
-        private void FillKnownAttributes<TState>(IEntityIdentity id, TState state, AggregateVersion version,
-            Document document) where TState : class, IAggregateState
+        private void FillKnownAttributes<TState>(
+            IEntityIdentity id, TState state, AggregateVersion version, Document document)
+            where TState : class, IAggregateState
         {
             var stateVersion = version.Increment(state.GetChanges().Count);
+            document[KnownTableAttributes.AggregateId] = id.Value;
             document[KnownTableAttributes.AggregateType] = id.Tag;
             document[KnownTableAttributes.PartitionKey] = ConvertToPrimaryKey(id);
             document[KnownTableAttributes.SortKey] = HeadSortKeyValue;
@@ -104,62 +172,34 @@ namespace Domainator.Infrastructure.Repositories.StateManagement.Storage
         {
             foreach (var attribute in attributes)
             {
-                switch (Type.GetTypeCode(attribute.Value.GetType()))
+                var dbEntry = MapValueToDynamoDbEntry(attribute.Value);
+                if (dbEntry != null)
                 {
-                    case TypeCode.Boolean:
-                        document[attribute.Key] = (bool)attribute.Value;
-                        break;
-                    case TypeCode.Byte:
-                        document[attribute.Key] = (byte)attribute.Value;
-                        break;
-                    case TypeCode.Char:
-                        document[attribute.Key] = (char)attribute.Value;
-                        break;
-                    case TypeCode.DateTime:
-                        document[attribute.Key] = (DateTime)attribute.Value;
-                        break;
-                    case TypeCode.Decimal:
-                        document[attribute.Key] = (decimal)attribute.Value;
-                        break;
-                    case TypeCode.Double:
-                        document[attribute.Key] = (double)attribute.Value;
-                        break;
-                    case TypeCode.Int16:
-                        document[attribute.Key] = (short)attribute.Value;
-                        break;
-                    case TypeCode.Int32:
-                        document[attribute.Key] = (int)attribute.Value;
-                        break;
-                    case TypeCode.Int64:
-                        document[attribute.Key] = (long)attribute.Value;
-                        break;
-                    case TypeCode.SByte:
-                        document[attribute.Key] = (sbyte)attribute.Value;
-                        break;
-                    case TypeCode.Single:
-                        document[attribute.Key] = (float)attribute.Value;
-                        break;
-                    case TypeCode.String:
-                        document[attribute.Key] = (string)attribute.Value;
-                        break;
-                    case TypeCode.UInt16:
-                        document[attribute.Key] = (ushort)attribute.Value;
-                        break;
-                    case TypeCode.UInt32:
-                        document[attribute.Key] = (uint)attribute.Value;
-                        break;
-                    case TypeCode.UInt64:
-                        document[attribute.Key] = (ulong)attribute.Value;
-                        break;
-                    case TypeCode.DBNull:
-                    case TypeCode.Empty:
-                        // skip null values
-                        break;
-                    default:
-                        throw new InvalidOperationException($"Custom attributes of type {attribute.Value.GetType()} are not supported.");
+                    document[attribute.Key] = dbEntry;
                 }
             }
         }
+
+        private static DynamoDBEntry MapValueToDynamoDbEntry(object value) => Type.GetTypeCode(value.GetType()) switch
+        {
+            TypeCode.Boolean => (bool)value,
+            TypeCode.Byte => (byte)value,
+            TypeCode.Char => (char)value,
+            TypeCode.DateTime => (DateTime)value,
+            TypeCode.Decimal => (decimal)value,
+            TypeCode.Double => (double)value,
+            TypeCode.Empty => null,
+            TypeCode.Int16 => (short)value,
+            TypeCode.Int32 => (int)value,
+            TypeCode.Int64 => (long)value,
+            TypeCode.SByte => (sbyte)value,
+            TypeCode.Single => (float)value,
+            TypeCode.String => (string)value,
+            TypeCode.UInt16 => (ushort)value,
+            TypeCode.UInt32 => (uint)value,
+            TypeCode.UInt64 => (ulong)value,
+            _ => throw new InvalidOperationException($"Attributes of type {value.GetType()} are not supported.")
+        };
 
         private static string ConvertToPrimaryKey(IEntityIdentity id) => id.Tag + "|" + id.Value;
     }
