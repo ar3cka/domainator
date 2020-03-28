@@ -15,8 +15,26 @@ namespace Domainator.Extensions.DependencyInjection.UnitTests
             return Task.FromResult<ValueTuple<AggregateVersion, TState>>((AggregateVersion.Emtpy, default));
         }
 
-        public Task PersistAsync<TState>(IEntityIdentity id, TState state, AggregateVersion version, IReadOnlyDictionary<string, object> attributes,
-            CancellationToken cancellationToken) where TState : class, IAggregateState
+        public Task<IReadOnlyDictionary<IEntityIdentity, (AggregateVersion, TState)>> LoadBatchAsync<TState>(
+            IReadOnlyCollection<IEntityIdentity> ids, CancellationToken cancellationToken)
+            where TState : class, IAggregateState
+        {
+            return Task.FromResult<IReadOnlyDictionary<IEntityIdentity, (AggregateVersion, TState)>>(
+                new Dictionary<IEntityIdentity, (AggregateVersion, TState)>());
+        }
+
+        public Task<FindByAttributeValueStateQueryResult<TState>> FindByAttributeValueAsync<TState>(
+            FindByAttributeValueStateQuery query, CancellationToken cancellationToken)
+            where TState : class, IAggregateState
+        {
+            return Task.FromResult(new FindByAttributeValueStateQueryResult<TState>(
+                new Dictionary<IEntityIdentity, (AggregateVersion, TState)>(), null));
+        }
+
+        public Task PersistAsync<TState>(
+            IEntityIdentity id, TState state, AggregateVersion version, IReadOnlyDictionary<string, object> attributes,
+            CancellationToken cancellationToken)
+            where TState : class, IAggregateState
         {
             return Task.CompletedTask;
         }

@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.Contracts;
 
 namespace Domainator.Utilities
 {
@@ -9,6 +10,7 @@ namespace Domainator.Utilities
 
     internal static class Require
     {
+
         public static void NotNull<T>([ValidatedNotNullAttribute] T paramValue, string paramName) where T : class
         {
             if (paramValue == null)
@@ -22,6 +24,14 @@ namespace Domainator.Utilities
             if (value < 0)
             {
                 throw new ArgumentOutOfRangeException(param, value, "Value must be zero or greater.");
+            }
+        }
+
+        public static void Positive(int value, string param)
+        {
+            if (value <= 0)
+            {
+                throw new ArgumentOutOfRangeException(param, value, "Value must be positive.");
             }
         }
 

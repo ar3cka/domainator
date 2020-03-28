@@ -22,6 +22,27 @@ namespace Domainator.Infrastructure.Repositories.StateManagement.Storage
             where TState : class, IAggregateState;
 
         /// <summary>
+        /// Loads the states in one batch.
+        /// </summary>
+        /// <param name="ids">The list of identities to load the states for.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <typeparam name="TState">The type of the aggregate state.</typeparam>
+        /// <returns>Returns the map for identities and corresponding states.</returns>
+        Task<IReadOnlyDictionary<IEntityIdentity, (AggregateVersion, TState)>> LoadBatchAsync<TState>(
+            IReadOnlyCollection<IEntityIdentity> ids, CancellationToken cancellationToken)
+            where TState : class, IAggregateState;
+
+        /// <summary>
+        /// Finds the states by a custom attribute name and its value.
+        /// </summary>
+        /// <param name="query">The query object.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <typeparam name="TState">The type of the aggregate state.</typeparam>
+        Task<FindByAttributeValueStateQueryResult<TState>> FindByAttributeValueAsync<TState>(
+            FindByAttributeValueStateQuery query, CancellationToken cancellationToken)
+            where TState : class, IAggregateState;
+
+        /// <summary>
         /// Persists the state of an aggregate to external storage. The state version will be incremented on the number of changes in
         /// <see cref="IAggregateState.GetChanges"/>.
         /// </summary>

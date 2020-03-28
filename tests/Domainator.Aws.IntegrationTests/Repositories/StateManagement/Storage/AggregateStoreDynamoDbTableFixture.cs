@@ -35,11 +35,44 @@ namespace Domainator.Aws.IntegrationTests.Repositories.StateManagement.Storage
                         attributeDefinitions: new List<AttributeDefinition>
                         {
                             new AttributeDefinition(KnownTableAttributes.PartitionKey, ScalarAttributeType.S),
-                            new AttributeDefinition(KnownTableAttributes.SortKey, ScalarAttributeType.S)
+                            new AttributeDefinition(KnownTableAttributes.SortKey, ScalarAttributeType.S),
                         },
                         provisionedThroughput: new ProvisionedThroughput(1, 1)))
                     .GetAwaiter()
                     .GetResult();
+
+                var createIndex = new UpdateTableRequest();
+                createIndex.TableName = "AggregateStore";
+
+                createIndex.AttributeDefinitions = new List<AttributeDefinition>
+                {
+                    new AttributeDefinition("TaskProjectId", ScalarAttributeType.N)
+                };
+
+                createIndex.GlobalSecondaryIndexUpdates = new List<GlobalSecondaryIndexUpdate>();
+                createIndex.GlobalSecondaryIndexUpdates.Add(new GlobalSecondaryIndexUpdate
+                {
+                    Create = new CreateGlobalSecondaryIndexAction
+                    {
+                        IndexName = "TaskProjectIdIndex",
+                        Projection = new Projection
+                        {
+                            ProjectionType = ProjectionType.INCLUDE,
+                            NonKeyAttributes = new List<string>
+                            {
+                                KnownTableAttributes.AggregateId,
+                                KnownTableAttributes.AggregateType
+                            }
+                        },
+                        KeySchema = new List<KeySchemaElement>
+                        {
+                            new KeySchemaElement("TaskProjectId", KeyType.HASH)
+                        },
+                        ProvisionedThroughput = new ProvisionedThroughput(1, 1)
+                    }
+                });
+
+                client.UpdateTableAsync(createIndex).GetAwaiter().GetResult();
             }
 
             return Table.LoadTable(client, "AggregateStore");
