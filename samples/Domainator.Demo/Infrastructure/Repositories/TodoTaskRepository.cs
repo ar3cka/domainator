@@ -10,6 +10,7 @@ namespace Domainator.Demo.Domain.Infrastructure.Repositories
 {
     public class TodoTaskRepository : GenericRepository<TodoTaskId, TodoTask, TodoTask.AggregateState>, ITodoTaskRepository
     {
+        private const int DefaultQueryItemsLimit = 100;
         private const string TodoTaskProjectCustomAttribute = "TodoTaskProject";
         private const string TodoTaskStateCustomAttribute = "TodoTaskState";
 
@@ -27,11 +28,13 @@ namespace Domainator.Demo.Domain.Infrastructure.Repositories
             Require.NotNull(projectId, nameof(projectId));
 
             return await FindByAttributeValueAsync(
-                new FindByAttributeValueStateQuery(TodoTaskProjectCustomAttribute, projectId.Id, 100, paginationToken), cancellationToken);
+                new FindByAttributeValueStateQuery(TodoTaskProjectCustomAttribute, projectId.Id, DefaultQueryItemsLimit, paginationToken), cancellationToken);
         }
 
         protected override IReadOnlyDictionary<string, object> ExtractCustomAttributes(TodoTask.AggregateState state)
         {
+            Require.NotNull(state, nameof(state));
+
             return new Dictionary<string, object>
             {
                 {TodoTaskProjectCustomAttribute, state.ProjectId.Id},
