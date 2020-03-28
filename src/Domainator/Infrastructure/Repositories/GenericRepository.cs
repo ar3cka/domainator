@@ -82,7 +82,7 @@ namespace Domainator.Infrastructure.Repositories
         {
             Require.NotNull(query, nameof(query));
 
-            var queryResult = await _stateStorages.FindByAttributeValueAsync<TAggregateState>(query, cancellationToken);
+            var queryResult = await _stateStorage.FindByAttributeValueAsync<TAggregateState>(query, cancellationToken);
             var items = new List<TAggregateRoot>(queryResult.States.Count);
             foreach (var restoredState in queryResult.States)
             {
