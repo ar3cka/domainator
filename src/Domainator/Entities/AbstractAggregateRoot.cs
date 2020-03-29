@@ -44,8 +44,5 @@ namespace Domainator.Entities
 
         /// <inheritdoc />
         public AggregateVersion Version { get; }
-
-        /// <inheritdoc />
-        public ChangeSet GetChangeSet() => new ChangeSet(Version, State.GetChanges());
     }
 }
