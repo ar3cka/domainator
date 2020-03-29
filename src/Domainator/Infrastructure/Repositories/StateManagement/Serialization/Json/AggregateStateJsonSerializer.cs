@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using Domainator.DomainEvents;
 using Domainator.Entities;
 using Domainator.Utilities;
 using Newtonsoft.Json;
@@ -22,12 +24,14 @@ namespace Domainator.Infrastructure.Repositories.StateManagement.Serialization.J
             Converters =
             {
                 new AbstractEntityIdentityValueConverter(),
+                new ChangeSetJsonConverter(),
                 new StringEnumConverter()
-            }
+            },
+            Formatting = Formatting.None
         };
 
         /// <inheritdoc />
-        public string Serialize<TState>(TState state) where TState : class, IAggregateState
+        public string SerializeState<TState>(TState state) where TState : class, IAggregateState
         {
             Require.NotNull(state, nameof(state));
 
@@ -35,11 +39,25 @@ namespace Domainator.Infrastructure.Repositories.StateManagement.Serialization.J
         }
 
         /// <inheritdoc />
-        public TState Deserialize<TState>(string serializedState) where TState : class, IAggregateState
+        public TState DeserializeState<TState>(string serializedState) where TState : class, IAggregateState
         {
             Require.NotEmpty(serializedState, nameof(serializedState));
 
             return JsonConvert.DeserializeObject<TState>(serializedState, _jsonSerializerSettings);
+        }
+
+        public string SerializeChangeSet(ChangeSet changeSet)
+        {
+            Require.NotNull(changeSet, nameof(changeSet));
+
+            return JsonConvert.SerializeObject(changeSet, _jsonSerializerSettings);
+        }
+
+        public ChangeSet DeserializeChangeSet(string serializedChangeSet)
+        {
+            Require.NotEmpty(serializedChangeSet, nameof(serializedChangeSet));
+
+            return JsonConvert.DeserializeObject<ChangeSet>(serializedChangeSet, _jsonSerializerSettings);
         }
     }
 }

@@ -1,4 +1,7 @@
 using Domainator.Demo.Domain.Domain;
+using Domainator.DomainEvents;
+using Domainator.Entities;
+using Domainator.Infrastructure.Repositories.StateManagement;
 using Domainator.Infrastructure.Repositories.StateManagement.Serialization.Json;
 using Newtonsoft.Json.Linq;
 using Xunit;
@@ -11,10 +14,10 @@ namespace Domainator.UnitTests.Infrastructure.Repositories.StateManagement.Seria
 
         [Theory]
         [AggregateStateJsonSerializerTestsData]
-        public void SerializeObject_UsesIdPropertyValue(TodoTask.AggregateState state)
+        public void SerializeStateTest(TodoTask.AggregateState state)
         {
             // act
-            var serializedObject = JObject.Parse(_serializer.Serialize(state));
+            var serializedObject = JObject.Parse(_serializer.SerializeState(state));
 
             // assert
             Assert.Equal(state.ProjectId.Id, (int)serializedObject["projectId"]);
@@ -23,16 +26,73 @@ namespace Domainator.UnitTests.Infrastructure.Repositories.StateManagement.Seria
 
         [Theory]
         [AggregateStateJsonSerializerTestsData]
-        public void DeserializeObject_RestoresIdentityFromTheIdValue(TodoTask.AggregateState state)
+        public void DeserializeStateTest(TodoTask.AggregateState state)
         {
             // arrange
-            var serializedString = _serializer.Serialize(state);
+            var serializedString = _serializer.SerializeState(state);
 
             // act
-            var deserializedObject = _serializer.Deserialize<TodoTask.AggregateState>(serializedString);
+            var deserializedObject = _serializer.DeserializeState<TodoTask.AggregateState>(serializedString);
 
             // assert
             Assert.Equal(state.ProjectId.Id, deserializedObject.ProjectId.Id);
+        }
+
+        [Theory]
+        [AggregateStateJsonSerializerTestsData]
+        public void SerializeChangeSetTest(
+            AggregateVersion version, TodoTaskCreated taskCreated, TodoTaskMoved taskMoved)
+        {
+            // arrange
+            var changeSet = new ChangeSet(version, new IDomainEvent[] {taskCreated, taskMoved});
+
+            // act
+            var serializedChangeSet = JObject.Parse(_serializer.SerializeChangeSet(changeSet));
+
+            // assert
+            Assert.Equal((int)changeSet.FromVersion, serializedChangeSet["fromVersion"]);
+
+            var serializedClrTypes = (JArray)serializedChangeSet["changeClrTypes"];
+            Assert.Equal(typeof(TodoTaskCreated).AssemblyQualifiedName, serializedClrTypes[0]);
+            Assert.Equal(typeof(TodoTaskMoved).AssemblyQualifiedName, serializedClrTypes[1]);
+
+            var serializedChanges = (JArray)serializedChangeSet["changes"];
+            var serializedTaskCreated = serializedChanges[0];
+            Assert.Equal(taskCreated.TaskId.Id, (int)serializedTaskCreated["taskId"]);
+            Assert.Equal(taskCreated.ProjectId.Id, (int)serializedTaskCreated["projectId"]);
+
+            var serializedTaskMoved = serializedChanges[1];
+            Assert.Equal(taskMoved.TaskId.Id, (int)serializedTaskMoved["taskId"]);
+            Assert.Equal(taskMoved.NewProjectId.Id, (int)serializedTaskMoved["newProjectId"]);
+            Assert.Equal(taskMoved.OldProjectId.Id, (int)serializedTaskMoved["oldProjectId"]);
+        }
+
+        [Theory]
+        [AggregateStateJsonSerializerTestsData]
+        public void DeserializeChangeSetTest(
+            AggregateVersion version, TodoTaskCreated taskCreated, TodoTaskMoved taskMoved)
+        {
+            // arrange
+            var changeSet = new ChangeSet(version, new IDomainEvent[] {taskCreated, taskMoved});
+            var serializedChangeSet = _serializer.SerializeChangeSet(changeSet);
+
+            // act
+            var restoredChangeSet = _serializer.DeserializeChangeSet(serializedChangeSet);
+
+            // assert
+            Assert.Equal(changeSet.FromVersion, restoredChangeSet.FromVersion);
+            Assert.Equal(changeSet.ToVersion, restoredChangeSet.ToVersion);
+
+            var restoredTaskCreated = restoredChangeSet.Changes[0] as TodoTaskCreated;
+            Assert.NotNull(restoredTaskCreated);
+            Assert.Equal(taskCreated.TaskId, restoredTaskCreated.TaskId);
+            Assert.Equal(taskCreated.ProjectId, restoredTaskCreated.ProjectId);
+
+            var restoredTaskMoved = restoredChangeSet.Changes[1] as TodoTaskMoved;
+            Assert.NotNull(restoredTaskMoved);
+            Assert.Equal(taskMoved.TaskId, restoredTaskMoved.TaskId);
+            Assert.Equal(taskMoved.NewProjectId, restoredTaskMoved.NewProjectId);
+            Assert.Equal(taskMoved.OldProjectId, restoredTaskMoved.OldProjectId);
         }
     }
 }

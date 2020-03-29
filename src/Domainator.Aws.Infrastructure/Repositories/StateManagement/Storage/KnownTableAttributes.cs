@@ -10,5 +10,6 @@ namespace Domainator.Infrastructure.Repositories.StateManagement.Storage
         public static readonly string AggregateType = "Tag";
         public static readonly string CreatedAt = "CreatedAt";
         public static readonly string UpdatedAt = "UpdatedAt";
+        public static readonly string LastChangeSet = "LastChangeSet";
     }
 }

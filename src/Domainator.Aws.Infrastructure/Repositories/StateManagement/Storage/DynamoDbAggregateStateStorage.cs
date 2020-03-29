@@ -42,7 +42,7 @@ namespace Domainator.Infrastructure.Repositories.StateManagement.Storage
             {
                 var restoredData = (string)document[KnownTableAttributes.Data];
                 var restoredVersion = (int)document[KnownTableAttributes.Version];
-                var state = _serializer.Deserialize<TState>(restoredData);
+                var state = _serializer.DeserializeState<TState>(restoredData);
 
                 return (AggregateVersion.Create(restoredVersion), state);
             }
@@ -75,7 +75,7 @@ namespace Domainator.Infrastructure.Repositories.StateManagement.Storage
                 var aggregateId = (string)document[KnownTableAttributes.AggregateId];
                 var version = (int)document[KnownTableAttributes.Version];
                 var data = (string)document[KnownTableAttributes.Data];
-                var state = _serializer.Deserialize<TState>(data);
+                var state = _serializer.DeserializeState<TState>(data);
 
                 results[idToValueMap[aggregateId]] = (AggregateVersion.Create(version), state);
             }
@@ -151,13 +151,14 @@ namespace Domainator.Infrastructure.Repositories.StateManagement.Storage
             IEntityIdentity id, TState state, AggregateVersion version, IDictionary<string, DynamoDBEntry> document)
             where TState : class, IAggregateState
         {
-            var stateVersion = version.Increment(state.GetChanges().Count);
+            var changeSet = new ChangeSet(version, state.GetChanges());
+
             document[KnownTableAttributes.AggregateId] = id.Value;
             document[KnownTableAttributes.AggregateType] = id.Tag;
             document[KnownTableAttributes.PartitionKey] = ConvertToPrimaryKey(id);
             document[KnownTableAttributes.SortKey] = HeadSortKeyValue;
-            document[KnownTableAttributes.Data] = _serializer.Serialize(state);
-            document[KnownTableAttributes.Version] = (int)stateVersion;
+            document[KnownTableAttributes.Data] = _serializer.SerializeState(state);
+            document[KnownTableAttributes.Version] = (int)changeSet.ToVersion;
 
             var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
             if (version == AggregateVersion.Emtpy)
@@ -166,6 +167,7 @@ namespace Domainator.Infrastructure.Repositories.StateManagement.Storage
             }
 
             document[KnownTableAttributes.UpdatedAt] = now;
+            document[KnownTableAttributes.LastChangeSet] = _serializer.SerializeChangeSet(changeSet);
         }
 
         private static void FillCustomAttributes(IReadOnlyDictionary<string, object> attributes, IDictionary<string, DynamoDBEntry> document)
