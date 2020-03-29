@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using Domainator.DomainEvents;
 using Domainator.Entities;
 using Domainator.Utilities;
 using Newtonsoft.Json;
