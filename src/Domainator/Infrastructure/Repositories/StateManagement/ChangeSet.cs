@@ -28,7 +28,7 @@ namespace Domainator.Infrastructure.Repositories.StateManagement
         public ChangeSet(AggregateVersion fromVersion, IReadOnlyList<IDomainEvent> changes)
         {
             Require.NotNull(changes, nameof(changes));
-            
+
             FromVersion = fromVersion;
             Changes = changes;
             ToVersion = fromVersion.Increment(changes.Count);
