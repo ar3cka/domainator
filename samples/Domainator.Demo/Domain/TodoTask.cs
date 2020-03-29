@@ -23,6 +23,11 @@ namespace Domainator.Demo.Domain.Domain
         {
             Require.NotNull(projectId, nameof(projectId));
 
+            if (projectId.Equals(InternalState.ProjectId))
+            {
+                return;
+            }
+
             State.Mutate(new TodoTaskMoved(InternalId, InternalState.ProjectId, projectId));
         }
     }

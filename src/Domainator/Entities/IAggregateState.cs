@@ -16,11 +16,13 @@ namespace Domainator.Entities
         /// <summary>
         /// Gets the list of domain events that have been applied to the current state.
         /// </summary>
+        /// <remarks><see cref="GetChanges"/> is implemented as a method to avoid deserialization.</remarks>
         IReadOnlyList<object> GetChanges();
 
         /// <summary>
         /// Indicates that the state contains changes
         /// </summary>
-        bool IsUpdated { get; }
+        /// <remarks><see cref="HasChanges"/> is implemented as a method to avoid deserialization.</remarks>
+        bool HasChanges();
     }
 }
