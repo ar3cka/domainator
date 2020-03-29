@@ -61,7 +61,7 @@ namespace Domainator.Infrastructure.Repositories
         {
             Require.NotNull(entity, nameof(entity));
 
-            if (entity.State.IsUpdated)
+            if (entity.State.HasChanges())
             {
                 await _stateStorage.PersistAsync(
                     id: entity.Id,

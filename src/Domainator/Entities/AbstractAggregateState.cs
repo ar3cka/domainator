@@ -34,6 +34,6 @@ namespace Domainator.Entities
         public IReadOnlyList<object> GetChanges() => _changes;
 
         /// <inheritdoc />
-        public bool IsUpdated => _changes.Any();
+        public bool HasChanges() => _changes.Any();
     }
 }

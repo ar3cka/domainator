@@ -15,6 +15,7 @@ namespace Domainator.Demo.Domain.Domain
             {
                 Require.NotNull(domainEvent, nameof(domainEvent));
 
+                TaskId = domainEvent.TaskId;
                 ProjectId = domainEvent.ProjectId;
                 TaskState = TaskState.Created;
             }
@@ -24,8 +25,9 @@ namespace Domainator.Demo.Domain.Domain
                 Require.NotNull(domainEvent, nameof(domainEvent));
 
                 ProjectId = domainEvent.NewProjectId;
-                TaskState = TaskState.Created;
             }
+
+            public TodoTaskId TaskId { get; set; }
 
             public ProjectId ProjectId { get; set; }
 

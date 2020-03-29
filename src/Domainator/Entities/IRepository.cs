@@ -30,7 +30,7 @@ namespace Domainator.Entities
         Task<TAggregateRoot> GetByIdAsync(TEntityId id, CancellationToken cancellationToken);
 
         /// <summary>
-        /// Saves the entity. If entity does not contain changes <see cref="IAggregateState.IsUpdated"/> the entity state
+        /// Saves the entity. If entity does not contain changes <see cref="IAggregateState.HasChanges"/> the entity state
         /// is not persisted.
         /// </summary>
         /// <param name="entity">The entity to save.</param>
