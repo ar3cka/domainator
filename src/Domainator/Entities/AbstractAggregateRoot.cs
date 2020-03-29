@@ -1,3 +1,4 @@
+using Domainator.Infrastructure.Repositories.StateManagement;
 using Domainator.Utilities;
 
 namespace Domainator.Entities
@@ -43,5 +44,8 @@ namespace Domainator.Entities
 
         /// <inheritdoc />
         public AggregateVersion Version { get; }
+
+        /// <inheritdoc />
+        public ChangeSet GetChangeSet() => new ChangeSet(Version, State.GetChanges());
     }
 }

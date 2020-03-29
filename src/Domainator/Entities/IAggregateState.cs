@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Domainator.DomainEvents;
 
 namespace Domainator.Entities
 {
@@ -11,13 +12,13 @@ namespace Domainator.Entities
         /// Mutates the current state with a domain event.
         /// </summary>
         /// <param name="domainEvent">A domain event.</param>
-        void Mutate(object domainEvent);
+        void Mutate(IDomainEvent domainEvent);
 
         /// <summary>
         /// Gets the list of domain events that have been applied to the current state.
         /// </summary>
         /// <remarks><see cref="GetChanges"/> is implemented as a method to avoid deserialization.</remarks>
-        IReadOnlyList<object> GetChanges();
+        IReadOnlyList<IDomainEvent> GetChanges();
 
         /// <summary>
         /// Indicates that the state contains changes
