@@ -1,4 +1,3 @@
-using Domainator.Infrastructure.Repositories.StateManagement;
 using Domainator.Utilities;
 
 namespace Domainator.Entities

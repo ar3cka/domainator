@@ -1,5 +1,4 @@
 using Domainator.Entities;
-using Domainator.Infrastructure.Repositories.StateManagement.Serialization.Json;
 
 namespace Domainator.Infrastructure.Repositories.StateManagement.Serialization
 {
