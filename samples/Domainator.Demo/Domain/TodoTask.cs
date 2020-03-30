@@ -9,6 +9,10 @@ namespace Domainator.Demo.Domain.Domain
         {
         }
 
+        public TodoTask(AggregateState state) : base(state)
+        {
+        }
+
         public void Create(TodoTaskId taskId, ProjectId projectId)
         {
             Require.NotNull(taskId, nameof(taskId));

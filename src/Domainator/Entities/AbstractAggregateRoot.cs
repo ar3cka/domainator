@@ -36,13 +36,12 @@ namespace Domainator.Entities
         /// <param name="id">The unique identity of the aggregate.</param>
         /// <param name="version">The version of the aggregate</param>
         /// <param name="state">The state of the aggregate.</param>
-        protected AbstractAggregateRoot(TEntityId id, AggregateVersion version, TAggregateState state)
+        protected AbstractAggregateRoot(TEntityId id, AggregateVersion version, TAggregateState state) : this(state)
         {
             Require.NotNull(id, nameof(id));
             Require.NotNull(state, nameof(state));
 
             InternalId = id;
-            InternalState = state;
             Version = version;
         }
 
