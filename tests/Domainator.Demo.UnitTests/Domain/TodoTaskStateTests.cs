@@ -36,5 +36,16 @@ namespace Domainator.Demo.UnitTests.Domain
             Assert.NotNull(_state.ProjectId);
             Assert.Equal(taskMoved.NewProjectId, _state.ProjectId);
         }
+
+        [Theory]
+        [TodoTaskTestsData]
+        public void WhenTaskCompleted_SetsCompletedState(TodoTaskCompleted taskCompleted)
+        {
+            // act
+            _state.When(taskCompleted);
+
+            // assert
+            Assert.Equal(TaskState.Completed, _state.TaskState);
+        }
     }
 }

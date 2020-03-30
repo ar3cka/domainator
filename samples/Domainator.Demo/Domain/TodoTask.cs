@@ -30,5 +30,13 @@ namespace Domainator.Demo.Domain.Domain
 
             State.Mutate(new TodoTaskMoved(InternalId, InternalState.ProjectId, projectId));
         }
+
+        public void Complete()
+        {
+            if (InternalState.TaskState != TaskState.Completed)
+            {
+                State.Mutate(new TodoTaskCompleted(InternalId));
+            }
+        }
     }
 }
