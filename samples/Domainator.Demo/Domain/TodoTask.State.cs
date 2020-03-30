@@ -27,6 +27,13 @@ namespace Domainator.Demo.Domain.Domain
                 ProjectId = domainEvent.NewProjectId;
             }
 
+            public void When(TodoTaskCompleted domainEvent)
+            {
+                Require.NotNull(domainEvent, nameof(domainEvent));
+
+                TaskState = TaskState.Completed;
+            }
+
             public TodoTaskId TaskId { get; set; }
 
             public ProjectId ProjectId { get; set; }
