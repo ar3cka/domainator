@@ -1,7 +1,4 @@
 using System;
-using System.Collections.Concurrent;
-using System.Diagnostics;
-using System.Reflection;
 using Domainator.Entities;
 using Domainator.Utilities;
 using Newtonsoft.Json;
@@ -10,29 +7,6 @@ namespace Domainator.Infrastructure.Repositories.StateManagement.Serialization.J
 {
     internal class AbstractEntityIdentityValueConverter : JsonConverter
     {
-        private static readonly ConcurrentDictionary<Type, IdentityTypeConverterImpl> _converters = new ConcurrentDictionary<Type,IdentityTypeConverterImpl>();
-
-        private class IdentityTypeConverterImpl
-        {
-            private readonly PropertyInfo _idProperty;
-            private readonly ConstructorInfo _ctor;
-
-            public IdentityTypeConverterImpl(Type identityType)
-            {
-                _idProperty = identityType.GetProperty("Id", BindingFlags.Instance | BindingFlags.Public);
-
-                Debug.Assert(_idProperty != null, nameof(_idProperty) + " != null");
-
-                _ctor = identityType.GetConstructor(new [] { _idProperty.PropertyType });
-            }
-
-            public object ReadJson(JsonReader reader, JsonSerializer serializer)
-            {
-                var idValue = serializer.Deserialize(reader, _idProperty.PropertyType);
-                return _ctor.Invoke(new [] { idValue });
-            }
-        }
-
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
             Require.NotNull(writer, nameof(writer));

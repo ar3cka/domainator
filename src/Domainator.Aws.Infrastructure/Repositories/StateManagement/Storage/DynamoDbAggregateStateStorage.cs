@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Amazon.DynamoDBv2.DocumentModel;
@@ -205,13 +204,10 @@ namespace Domainator.Infrastructure.Repositories.StateManagement.Storage
             _ => throw NotSupportedAttributeType(value.GetType())
         };
 
-        private static DynamoDBEntry MapObjectToDynamoDbEntry(object value) => value switch
-        {
-            IEntityIdentity entityIdentity => AbstractEntityIdentity.IsValidType(entityIdentity.GetType())
-                ? MapValueToDynamoDbEntry(AbstractEntityIdentity.ExtractRawValue(entityIdentity))
-                : throw NotSupportedAttributeType(value.GetType()),
-            _ => throw NotSupportedAttributeType(value.GetType())
-        };
+        private static DynamoDBEntry MapObjectToDynamoDbEntry(object value) =>
+            AbstractEntityIdentity.IsValidType(value.GetType())
+                ? MapValueToDynamoDbEntry(AbstractEntityIdentity.ExtractRawValue(value))
+                : throw NotSupportedAttributeType(value.GetType());
 
         private static string ConvertToPrimaryKey(IEntityIdentity id) => id.Tag + "|" + id.Value;
 
