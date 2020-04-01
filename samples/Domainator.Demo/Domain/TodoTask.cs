@@ -5,11 +5,7 @@ namespace Domainator.Demo.Domain.Domain
 {
     public sealed partial class TodoTask : AbstractAggregateRoot<TodoTaskId, TodoTask.AggregateState>
     {
-        public TodoTask()
-        {
-        }
-
-        public TodoTask(AggregateState state) : base(state)
+        public TodoTask() : base(new AggregateState())
         {
         }
 

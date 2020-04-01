@@ -10,15 +10,6 @@ namespace Domainator.Entities
         where TAggregateState : class, IAggregateState, new()
     {
         /// <summary>
-        /// Default constructor for creating an instance of of the aggregate with empty state and version.
-        /// </summary>
-        protected AbstractAggregateRoot()
-        {
-            Version = AggregateVersion.Emtpy;
-            InternalState = new TAggregateState();
-        }
-
-        /// <summary>
         /// Convenient constructor for for creating the aggregate instance from the state.
         /// </summary>
         /// <param name="state">The state of the aggregate.</param>
