@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Amazon.DynamoDBv2.DocumentModel;
@@ -200,9 +201,21 @@ namespace Domainator.Infrastructure.Repositories.StateManagement.Storage
             TypeCode.UInt16 => (ushort)value,
             TypeCode.UInt32 => (uint)value,
             TypeCode.UInt64 => (ulong)value,
-            _ => throw new InvalidOperationException($"Attributes of type {value.GetType()} are not supported.")
+            TypeCode.Object => MapObjectToDynamoDbEntry(value),
+            _ => throw NotSupportedAttributeType(value.GetType())
+        };
+
+        private static DynamoDBEntry MapObjectToDynamoDbEntry(object value) => value switch
+        {
+            IEntityIdentity entityIdentity => AbstractEntityIdentity.IsValidType(entityIdentity.GetType())
+                ? MapValueToDynamoDbEntry(AbstractEntityIdentity.ExtractRawValue(entityIdentity))
+                : throw NotSupportedAttributeType(value.GetType()),
+            _ => throw NotSupportedAttributeType(value.GetType())
         };
 
         private static string ConvertToPrimaryKey(IEntityIdentity id) => id.Tag + "|" + id.Value;
+
+        private static InvalidOperationException NotSupportedAttributeType(Type valueType) =>
+            new InvalidOperationException($"Attributes of type {valueType} are not supported.");
     }
 }

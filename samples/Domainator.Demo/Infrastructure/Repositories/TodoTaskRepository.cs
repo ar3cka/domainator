@@ -28,7 +28,7 @@ namespace Domainator.Demo.Domain.Infrastructure.Repositories
             Require.NotNull(projectId, nameof(projectId));
 
             return await FindByAttributeValueAsync(
-                new FindByAttributeValueStateQuery(TodoTaskProjectCustomAttribute, projectId.Id, DefaultQueryItemsLimit, paginationToken), cancellationToken);
+                new FindByAttributeValueStateQuery(TodoTaskProjectCustomAttribute, projectId, DefaultQueryItemsLimit, paginationToken), cancellationToken);
         }
 
         protected override IReadOnlyDictionary<string, object> ExtractCustomAttributes(TodoTask.AggregateState state)
@@ -37,7 +37,7 @@ namespace Domainator.Demo.Domain.Infrastructure.Repositories
 
             return new Dictionary<string, object>
             {
-                {TodoTaskProjectCustomAttribute, state.ProjectId.Id},
+                {TodoTaskProjectCustomAttribute, state.ProjectId},
                 {TodoTaskStateCustomAttribute, (int)state.TaskState}
             };
         }
