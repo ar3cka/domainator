@@ -1,12 +1,10 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoFixture;
 using AutoFixture.Xunit2;
 using Domainator.Demo.Domain.Domain;
 using Domainator.Entities;
-using Domainator.Infrastructure.Repositories.StateManagement;
 using Domainator.Infrastructure.Repositories.StateManagement.Serialization.Json;
 using Domainator.Infrastructure.Repositories.StateManagement.Storage;
 using Xunit;
@@ -95,7 +93,6 @@ namespace Domainator.Aws.IntegrationTests.Repositories.StateManagement.Storage
         {
             // arrange
             const string attributeName = "TaskProjectId";
-            var projectRawId = projectId.Id;
             var states = new Dictionary<TodoTaskId, (AggregateVersion, TodoTask.AggregateState)>();
 
             foreach (var id in ids)
@@ -108,12 +105,12 @@ namespace Domainator.Aws.IntegrationTests.Repositories.StateManagement.Storage
                     id,
                     state,
                     version,
-                    new Dictionary<string, object> {{ attributeName, projectRawId }},
+                    new Dictionary<string, object> {{ attributeName, projectId }},
                     CancellationToken.None);
             }
 
             // act
-            var query = new FindByAttributeValueStateQuery(attributeName, projectRawId, ids.Length);
+            var query = new FindByAttributeValueStateQuery(attributeName, projectId, ids.Length);
             var queryResult = await _stateStorage.FindByAttributeValueAsync<TodoTask.AggregateState>(query, CancellationToken.None);
 
             // assert
@@ -137,7 +134,6 @@ namespace Domainator.Aws.IntegrationTests.Repositories.StateManagement.Storage
         {
             // arrange
             const string attributeName = "TaskProjectId";
-            var projectRawId = projectId.Id;
             var states = new Dictionary<TodoTaskId, (AggregateVersion, TodoTask.AggregateState)>();
 
             foreach (var id in ids)
@@ -150,7 +146,7 @@ namespace Domainator.Aws.IntegrationTests.Repositories.StateManagement.Storage
                     id,
                     state,
                     version,
-                    new Dictionary<string, object> {{ attributeName, projectRawId }},
+                    new Dictionary<string, object> {{ attributeName, projectId }},
                     CancellationToken.None);
             }
 
@@ -162,11 +158,11 @@ namespace Domainator.Aws.IntegrationTests.Repositories.StateManagement.Storage
                 FindByAttributeValueStateQuery query;
                 if (queryResult != null)
                 {
-                    query = new FindByAttributeValueStateQuery(attributeName, projectRawId, 2, queryResult.PaginationToken);
+                    query = new FindByAttributeValueStateQuery(attributeName, projectId, 2, queryResult.PaginationToken);
                 }
                 else
                 {
-                    query = new FindByAttributeValueStateQuery(attributeName, projectRawId, 2);
+                    query = new FindByAttributeValueStateQuery(attributeName, projectId, 2);
                 }
 
                 queryResult = await _stateStorage.FindByAttributeValueAsync<TodoTask.AggregateState>(query, CancellationToken.None);

@@ -11,7 +11,6 @@ namespace Domainator.Infrastructure.Repositories.StateManagement.Serialization.J
     internal class AbstractEntityIdentityValueConverter : JsonConverter
     {
         private static readonly ConcurrentDictionary<Type, IdentityTypeConverterImpl> _converters = new ConcurrentDictionary<Type,IdentityTypeConverterImpl>();
-        private static readonly ConcurrentDictionary<Type, bool> _supportedTypes = new ConcurrentDictionary<Type, bool>();
 
         private class IdentityTypeConverterImpl
         {
@@ -27,13 +26,6 @@ namespace Domainator.Infrastructure.Repositories.StateManagement.Serialization.J
                 _ctor = identityType.GetConstructor(new [] { _idProperty.PropertyType });
             }
 
-            public void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-            {
-                var idValue = _idProperty.GetValue(value);
-
-                serializer.Serialize(writer, idValue);
-            }
-
             public object ReadJson(JsonReader reader, JsonSerializer serializer)
             {
                 var idValue = serializer.Deserialize(reader, _idProperty.PropertyType);
@@ -47,8 +39,8 @@ namespace Domainator.Infrastructure.Repositories.StateManagement.Serialization.J
             Require.NotNull(value, nameof(value));
             Require.NotNull(serializer, nameof(serializer));
 
-            var converter = _converters.GetOrAdd(value.GetType(), t => new IdentityTypeConverterImpl(t));
-            converter.WriteJson(writer, value, serializer);
+            var rawValue = AbstractEntityIdentity.ExtractRawValue(value);
+            serializer.Serialize(writer, rawValue);
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
@@ -57,35 +49,17 @@ namespace Domainator.Infrastructure.Repositories.StateManagement.Serialization.J
             Require.NotNull(objectType, nameof(objectType));
             Require.NotNull(serializer, nameof(serializer));
 
-            var converter = _converters.GetOrAdd(objectType, t => new IdentityTypeConverterImpl(t));
-            return converter.ReadJson(reader, serializer);
+            var rawValueType = AbstractEntityIdentity.GetRawType(objectType);
+            var rawValue = serializer.Deserialize(reader, rawValueType);
+
+            return AbstractEntityIdentity.CreateFromRawValue(rawValue, objectType);
         }
 
         public override bool CanConvert(Type objectType)
         {
             Require.NotNull(objectType, nameof(objectType));
 
-            return _supportedTypes.GetOrAdd(objectType, CanConvertInternal);
-        }
-
-        private static bool CanConvertInternal(Type objectType)
-        {
-            if (typeof(IEntityIdentity).IsAssignableFrom(objectType))
-            {
-                var baseType = objectType.BaseType;
-                while (baseType != null)
-                {
-                    if (baseType.IsConstructedGenericType)
-                    {
-                        var genericTypeDefinition = baseType.GetGenericTypeDefinition();
-                        return genericTypeDefinition == typeof(AbstractEntityIdentity<>);
-                    }
-
-                    baseType = baseType.BaseType;
-                }
-            }
-
-            return false;
+            return AbstractEntityIdentity.IsValidType(objectType);
         }
     }
 }

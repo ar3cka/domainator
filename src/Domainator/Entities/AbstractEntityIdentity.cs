@@ -1,115 +1,115 @@
 using System;
-using System.Collections.Generic;
-using System.Globalization;
+using System.Collections.Concurrent;
+using System.Diagnostics;
+using System.Reflection;
 using Domainator.Utilities;
 
 namespace Domainator.Entities
 {
     /// <summary>
-    /// A base class for the scalar type based identities such as <see cref="Int32"/>, <see cref="string"/>,
-    /// <see cref="Guid"/>, etc. The class implements basic equality functionality.
+    /// Companion class of <see cref="AbstractEntityIdentity{TKey}"/> with utilities methods.
     /// </summary>
-    /// <typeparam name="TKey">The type of scalar type.</typeparam>
-    public abstract class AbstractEntityIdentity<TKey> : IEntityIdentity, IEquatable<AbstractEntityIdentity<TKey>>
+    public static class AbstractEntityIdentity
     {
-        /// <summary>
-        /// The constructor is used for restoring the instance of <see cref="AbstractEntityIdentity{TKey}"/>
-        /// from provided <see cref="IEntityIdentity"/>. It is used during restoring aggregates from persistence
-        /// storage.
-        /// </summary>
-        protected AbstractEntityIdentity(IEntityIdentity identity)
+        private static readonly ConcurrentDictionary<Type, RawValueHandler> _identityHandlers = new ConcurrentDictionary<Type, RawValueHandler>();
+        private static readonly ConcurrentDictionary<Type, bool> _identityTypes = new ConcurrentDictionary<Type, bool>();
+
+        private class RawValueHandler
         {
-            Require.NotNull(identity, nameof(identity));
-            Require.True(identity.Tag.Equals(Tag, StringComparison.Ordinal), nameof(identity), "Invalid identity.Tag value");
+            private readonly PropertyInfo _idProperty;
+            private readonly ConstructorInfo _ctor;
 
-            Id = ParseIdValue(identity.Value);
-        }
-
-        /// <summary>
-        /// The constructor is used for creating new value of <see cref="AbstractEntityIdentity{TKey}"/>.
-        /// </summary>
-        /// <param name="id"></param>
-        protected AbstractEntityIdentity(TKey id)
-        {
-            Id = id;
-        }
-
-        /// <summary>
-        /// Parse received value from <see cref="IEntityIdentity.Value"/> back to <see cref="Id"/>.
-        /// </summary>
-        /// <param name="identityValue"></param>
-        /// <returns></returns>
-        protected abstract TKey ParseIdValue(string identityValue);
-
-        /// <summary>
-        /// Gets internal value of the identity as CLR type.
-        /// </summary>
-        public TKey Id { get; }
-
-        /// <inheritdoc />
-        public abstract string Tag { get; }
-
-        /// <inheritdoc />
-        public virtual string Value => Id.ToString();
-
-        /// <inheritdoc />
-        public virtual bool Equals(AbstractEntityIdentity<TKey> other)
-        {
-            if (ReferenceEquals(null, other))
+            public RawValueHandler(Type identityType)
             {
+                _idProperty = identityType.GetProperty("Id", BindingFlags.Instance | BindingFlags.Public);
+
+                Debug.Assert(_idProperty != null, nameof(_idProperty) + " != null");
+
+                _ctor = identityType.GetConstructor(new [] { _idProperty.PropertyType });
+            }
+
+            public object ExtractRawValue(object idValue)
+            {
+                return _idProperty.GetValue(idValue);
+            }
+
+            public object CreateFromRawValue(object rawValue)
+            {
+                return _ctor.Invoke(new [] { rawValue });
+            }
+
+            public Type GetRawValueType()
+            {
+                return _idProperty.PropertyType;
+            }
+        }
+
+        public static Type GetRawType(Type idType)
+        {
+            Require.NotNull(idType, nameof(idType));
+            Require.True(IsValidType(idType), nameof(idType), "Invalid identity type");
+
+            var handler = _identityHandlers.GetOrAdd(idType, t => new RawValueHandler(t));
+
+            return handler.GetRawValueType();
+        }
+
+        /// <summary>
+        /// Extracts raw value from an instance of <see cref="AbstractEntityIdentity{TKey}"/>.
+        /// </summary>
+        /// <param name="idValue">The instance of identity.</param>
+        public static object ExtractRawValue(object idValue)
+        {
+            Require.NotNull(idValue, nameof(idValue));
+            Require.True(IsValidType(idValue.GetType()), nameof(idValue), "Invalid identity type");
+
+            var handler = _identityHandlers.GetOrAdd(idValue.GetType(), t => new RawValueHandler(t));
+
+            return handler.ExtractRawValue(idValue);
+        }
+
+        /// <summary>
+        /// Checks whether <paramref name="objectType"/> is an implementation of <see cref="AbstractEntityIdentity{TKey}"/>.
+        /// </summary>
+        /// <param name="objectType">The type of checking.</param>
+        public static bool IsValidType(Type objectType)
+        {
+            Require.NotNull(objectType, nameof(objectType));
+
+            return _identityTypes.GetOrAdd(objectType, type =>
+            {
+                if (typeof(IEntityIdentity).IsAssignableFrom(type))
+                {
+                    var baseType = type.BaseType;
+                    while (baseType != null)
+                    {
+                        if (baseType.IsConstructedGenericType)
+                        {
+                            var genericTypeDefinition = baseType.GetGenericTypeDefinition();
+                            return genericTypeDefinition == typeof(AbstractEntityIdentity<>);
+                        }
+
+                        baseType = baseType.BaseType;
+                    }
+                }
+
                 return false;
-            }
-
-            if (ReferenceEquals(this, other))
-            {
-                return true;
-            }
-
-            return EqualityComparer<TKey>.Default.Equals(Id, other.Id) && Tag.Equals(other.Tag, StringComparison.Ordinal);
-        }
-
-        /// <inheritdoc />
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj))
-            {
-                return false;
-            }
-
-            if (ReferenceEquals(this, obj))
-            {
-                return true;
-            }
-
-            if (obj.GetType() != GetType())
-            {
-                return false;
-            }
-
-            return Equals((AbstractEntityIdentity<TKey>) obj);
+            });
         }
 
         /// <summary>
-        /// Returns a hash code value calculated based on <see cref="Id"/> and <see cref="Tag"/> properties.
+        /// Creates an instance of <see cref="AbstractEntityIdentity"/> from a raw value.
         /// </summary>
-        public override int GetHashCode()
+        /// <param name="rawValue">The raw value of identity.</param>
+        /// <param name="idType">The type of identity.</param>
+        public static object CreateFromRawValue(object rawValue, Type idType)
         {
-            unchecked
-            {
-                return (EqualityComparer<TKey>.Default.GetHashCode(Id) * 397) ^ Tag.GetHashCode();
-            }
-        }
+            Require.NotNull(rawValue, nameof(rawValue));
+            Require.True(IsValidType(idType), nameof(idType), "Invalid identity type");
 
-        public static bool operator ==(AbstractEntityIdentity<TKey> left, AbstractEntityIdentity<TKey> right)
-        {
-            return Equals(left, right);
-        }
+            var handler = _identityHandlers.GetOrAdd(idType, t => new RawValueHandler(t));
 
-        public static bool operator !=(AbstractEntityIdentity<TKey> left, AbstractEntityIdentity<TKey> right)
-        {
-            return !Equals(left, right);
+            return handler.CreateFromRawValue(rawValue);
         }
-
-        public override string ToString() => string.Format(CultureInfo.InvariantCulture, "{0}|{1}", Tag, Value);
     }
 }
