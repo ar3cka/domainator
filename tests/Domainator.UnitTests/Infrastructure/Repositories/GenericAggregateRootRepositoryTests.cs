@@ -118,7 +118,7 @@ namespace Domainator.UnitTests.Infrastructure.Repositories
                     It.IsAny<TodoTask.AggregateState>(),
                     It.IsAny<AggregateVersion>(),
                     It.Is<IReadOnlyDictionary<string, object>>(attributes =>
-                        attributes["TodoTaskProject"].Equals(state.ProjectId.Id) &&
+                        attributes["TodoTaskProject"].Equals(state.ProjectId) &&
                         attributes["TodoTaskState"].Equals((int)state.TaskState)),
                     It.IsAny<CancellationToken>()),
                 Times.Once);
@@ -148,7 +148,7 @@ namespace Domainator.UnitTests.Infrastructure.Repositories
                 .Setup(self => self.FindByAttributeValueAsync<TodoTask.AggregateState>(
                     It.Is<FindByAttributeValueStateQuery>(query =>
                         query.AttributeName.Equals("TodoTaskProject") &&
-                        query.AttributeValue.Equals(projectId.Id) &&
+                        query.AttributeValue.Equals(projectId) &&
                         query.Limit == 100 &&
                         query.PaginationToken.Equals(paginationToken)),
                     It.IsAny<CancellationToken>()))
