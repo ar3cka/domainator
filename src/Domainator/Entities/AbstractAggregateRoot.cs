@@ -7,7 +7,7 @@ namespace Domainator.Entities
     /// </summary>
     public class AbstractAggregateRoot<TEntityId, TAggregateState> : IAggregateRoot
         where TEntityId : class, IEntityIdentity
-        where TAggregateState : class, IAggregateState, new()
+        where TAggregateState : class, IAggregateState
     {
         /// <summary>
         /// Convenient constructor for for creating the aggregate instance from the state.
