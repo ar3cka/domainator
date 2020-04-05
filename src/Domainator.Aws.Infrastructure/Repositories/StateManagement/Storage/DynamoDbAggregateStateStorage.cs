@@ -209,7 +209,7 @@ namespace Domainator.Infrastructure.Repositories.StateManagement.Storage
                 ? MapValueToDynamoDbEntry(AbstractEntityIdentity.ExtractRawValue(value))
                 : throw NotSupportedAttributeType(value.GetType());
 
-        private static string ConvertToPrimaryKey(IEntityIdentity id) => id.Tag + "|" + id.Value;
+        private static string ConvertToPrimaryKey(IEntityIdentity id) => id.Tag + "_" + id.Value;
 
         private static InvalidOperationException NotSupportedAttributeType(Type valueType) =>
             new InvalidOperationException($"Attributes of type {valueType} are not supported.");
