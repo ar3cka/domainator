@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Domainator.Demo.Domain.Domain;
@@ -20,6 +21,11 @@ namespace Domainator.Extensions.DependencyInjection.UnitTests
         }
 
         public Task<TodoTask> GetByIdAsync(TodoTaskId id, CancellationToken cancellationToken)
+        {
+            return null;
+        }
+
+        public Task<IReadOnlyList<TodoTask>> FindByIdBatchAsync(IReadOnlyList<TodoTaskId> ids, CancellationToken cancellationToken)
         {
             return null;
         }

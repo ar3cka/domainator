@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -28,6 +29,15 @@ namespace Domainator.Entities
         /// <returns>Returns the aggregate root entity.</returns>
         /// <exception cref="EntityNotFoundException">Aggregate root entity with <paramref name="id"/> not found.</exception>
         Task<TAggregateRoot> GetByIdAsync(TEntityId id, CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Tries to find a list for aggregates by the provided batch of <paramref name="ids"/>.
+        /// </summary>
+        /// <param name="ids">The list if identities of aggregates.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Returns the list of found aggregates in order of <paramref name="ids"/>. If an aggregate
+        /// with id from the list is not found, the corresponding item in the result is null. </returns>
+        Task<IReadOnlyList<TAggregateRoot>> FindByIdBatchAsync(IReadOnlyList<TEntityId> ids, CancellationToken cancellationToken);
 
         /// <summary>
         /// Saves the entity. If entity does not contain changes <see cref="IAggregateState.HasChanges"/> the entity state
