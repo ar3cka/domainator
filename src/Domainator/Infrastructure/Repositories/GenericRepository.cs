@@ -56,22 +56,19 @@ namespace Domainator.Infrastructure.Repositories
             return aggregateRoot;
         }
 
-        public async Task<IReadOnlyList<TAggregateRoot>> FindByIdBatchAsync(IReadOnlyList<TEntityId> ids, CancellationToken cancellationToken)
+        /// <inheritdoc />
+        public async Task<IReadOnlyDictionary<TEntityId, TAggregateRoot>> FindByIdBatchAsync(IReadOnlyList<TEntityId> ids, CancellationToken cancellationToken)
         {
             Require.NotNull(ids, nameof(ids));
 
             var states = await _stateStorage.LoadBatchAsync<TAggregateState>(ids, cancellationToken);
-            var result = new List<TAggregateRoot>(states.Count);
+            var result = new Dictionary<TEntityId, TAggregateRoot>();
             foreach (var entityId in ids)
             {
                 if (states.TryGetValue(entityId, out var restoredState))
                 {
                     var (version, state) = restoredState;
-                    result.Add(CreateAggregateInstance(entityId, version, state));
-                }
-                else
-                {
-                    result.Add(null);
+                    result.Add(entityId, CreateAggregateInstance(entityId, version, state));
                 }
             }
 
