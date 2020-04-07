@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoFixture.Xunit2;
@@ -184,6 +185,64 @@ namespace Domainator.UnitTests.Infrastructure.Repositories
                     It.Is<IReadOnlyDictionary<string, object>>(attributes => attributes.Count == 0),
                     It.IsAny<CancellationToken>()),
                 Times.Never);
+        }
+
+        [Theory]
+        [GenericAggregateRootRepositoryTestsData]
+        public async Task FindByIdBatchAsync_LoadsBatchOfStates(
+            [Frozen] Mock<IAggregateStateStorage> stateStorageMock,
+            ProjectId projectId,
+            string paginationToken,
+            string newPaginationToken,
+            TodoTaskId id,
+            AggregateVersion version,
+            TodoTask.AggregateState state,
+            TodoTaskRepository repository)
+        {
+            // arrange
+            var states = new Dictionary<IEntityIdentity, (AggregateVersion, TodoTask.AggregateState)>
+            {
+                {id, (version, state)}
+            };
+
+            stateStorageMock
+                .Setup(self => self.LoadBatchAsync<TodoTask.AggregateState>(
+                    It.Is<IReadOnlyCollection<TodoTaskId>>(query => query.Contains(id)),
+                    It.IsAny<CancellationToken>()))
+                .ReturnsAsync(states);
+
+            // act
+            var results = await repository.FindByIdBatchAsync(new[] { id }, CancellationToken.None);
+
+            // assert
+            Assert.Contains(
+                results.Values,
+                task => task.Version == version && task.Id.Equals(id) && ReferenceEquals(task.State, state));
+        }
+
+        [Theory]
+        [GenericAggregateRootRepositoryTestsData]
+        public async Task FindByIdBatchAsync_WhenStateForIdNotFound_ReturnsNothing(
+            [Frozen] Mock<IAggregateStateStorage> stateStorageMock,
+            ProjectId projectId,
+            string paginationToken,
+            string newPaginationToken,
+            TodoTaskId id,
+            AggregateVersion version,
+            TodoTaskRepository repository)
+        {
+            // arrange
+            stateStorageMock
+                .Setup(self => self.LoadBatchAsync<TodoTask.AggregateState>(
+                    It.Is<IReadOnlyCollection<TodoTaskId>>(query => query.Contains(id)),
+                    It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new Dictionary<IEntityIdentity, (AggregateVersion, TodoTask.AggregateState)>(0));
+
+            // act
+            var results = await repository.FindByIdBatchAsync(new[] { id }, CancellationToken.None);
+
+            // assert
+            Assert.DoesNotContain(results.Values, task => task.Id.Equals(id));
         }
     }
 }

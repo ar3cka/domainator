@@ -69,7 +69,7 @@ namespace Domainator.Infrastructure.Repositories.StateManagement.Storage
 
             await batchGet.ExecuteAsync(cancellationToken);
 
-            var results = new Dictionary<IEntityIdentity, (AggregateVersion, TState)>(ids.Count, EntityIdentity.DefaultComparer);
+            var results = new Dictionary<IEntityIdentity, (AggregateVersion, TState)>(batchGet.Results.Count, EntityIdentity.DefaultComparer);
             foreach (var document in batchGet.Results)
             {
                 var aggregateId = (string)document[KnownTableAttributes.AggregateId];

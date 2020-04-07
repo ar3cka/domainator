@@ -25,7 +25,7 @@ namespace Domainator.Extensions.DependencyInjection.UnitTests
             return null;
         }
 
-        public Task<IReadOnlyList<TodoTask>> FindByIdBatchAsync(IReadOnlyList<TodoTaskId> ids, CancellationToken cancellationToken)
+        public Task<IReadOnlyDictionary<TodoTaskId, TodoTask>> FindByIdBatchAsync(IReadOnlyList<TodoTaskId> ids, CancellationToken cancellationToken)
         {
             return null;
         }

@@ -9,7 +9,7 @@ namespace Domainator.Entities
     /// </summary>
     /// <typeparam name="TEntityId">The type of unique identity of the root entity.</typeparam>
     /// <typeparam name="TAggregateRoot">The type of aggregate root entity.</typeparam>
-    public interface IRepository<in TEntityId, TAggregateRoot>
+    public interface IRepository<TEntityId, TAggregateRoot>
         where TEntityId : class, IEntityIdentity
         where TAggregateRoot : class, IAggregateRoot
     {
@@ -35,9 +35,9 @@ namespace Domainator.Entities
         /// </summary>
         /// <param name="ids">The list if identities of aggregates.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>Returns the list of found aggregates in order of <paramref name="ids"/>. If an aggregate
-        /// with id from the list is not found, the corresponding item in the result is null. </returns>
-        Task<IReadOnlyList<TAggregateRoot>> FindByIdBatchAsync(IReadOnlyList<TEntityId> ids, CancellationToken cancellationToken);
+        /// <returns>Returns the map of found aggregates. If an aggregate
+        /// with id from the <paramref name="ids"/> is not found, the corresponding item in the result is not added.</returns>
+        Task<IReadOnlyDictionary<TEntityId, TAggregateRoot>> FindByIdBatchAsync(IReadOnlyList<TEntityId> ids, CancellationToken cancellationToken);
 
         /// <summary>
         /// Saves the entity. If entity does not contain changes <see cref="IAggregateState.HasChanges"/> the entity state
