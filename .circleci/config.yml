@@ -35,6 +35,7 @@ jobs:
           name: Update package version
           command: |
             export PATH="$PATH:/root/.dotnet/tools"
+            dotnet gitversion /showconfig
             dotnet gitversion /updateassemblyinfo > version.json
 
       - run:
