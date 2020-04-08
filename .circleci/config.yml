@@ -15,7 +15,7 @@ jobs:
       - run:
          name: Install GitVersion
          command: |
-             export GITVERSION_VERSION="5.2.3"
+             export GITVERSION_VERSION="5.2.4"
              dotnet tool install --global GitVersion.Tool --version $GITVERSION_VERSION
 
       - run:
