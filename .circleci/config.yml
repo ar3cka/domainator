@@ -11,6 +11,7 @@ jobs:
         AWS_REGION: FOO
     steps:
       - checkout
+      - run: git branch --create-reflog master origin/master
       - jq/install
       - run:
          name: Install GitVersion
