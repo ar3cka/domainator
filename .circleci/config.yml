@@ -36,7 +36,7 @@ jobs:
           command: |
             export PATH="$PATH:/root/.dotnet/tools"
             dotnet gitversion /showconfig
-            dotnet gitversion /updateassemblyinfo > version.json
+            dotnet gitversion /updateassemblyinfo /diag
 
       - run:
           name: Build
