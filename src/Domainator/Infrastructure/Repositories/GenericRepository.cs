@@ -57,7 +57,7 @@ namespace Domainator.Infrastructure.Repositories
         }
 
         /// <inheritdoc />
-        public async Task<IReadOnlyDictionary<TEntityId, TAggregateRoot>> FindByIdBatchAsync(IReadOnlyList<TEntityId> ids, CancellationToken cancellationToken)
+        public async Task<IReadOnlyDictionary<TEntityId, TAggregateRoot>> FindByIdBatchAsync(IReadOnlyCollection<TEntityId> ids, CancellationToken cancellationToken)
         {
             Require.NotNull(ids, nameof(ids));
 

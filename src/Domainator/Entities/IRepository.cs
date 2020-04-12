@@ -37,7 +37,7 @@ namespace Domainator.Entities
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Returns the map of found aggregates. If an aggregate
         /// with id from the <paramref name="ids"/> is not found, the corresponding item in the result is not added.</returns>
-        Task<IReadOnlyDictionary<TEntityId, TAggregateRoot>> FindByIdBatchAsync(IReadOnlyList<TEntityId> ids, CancellationToken cancellationToken);
+        Task<IReadOnlyDictionary<TEntityId, TAggregateRoot>> FindByIdBatchAsync(IReadOnlyCollection<TEntityId> ids, CancellationToken cancellationToken);
 
         /// <summary>
         /// Saves the entity. If entity does not contain changes <see cref="IAggregateState.HasChanges"/> the entity state
