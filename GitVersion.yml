@@ -1,11 +1,7 @@
 assembly-versioning-scheme: MajorMinorPatch
 mode: Mainline
 tag-prefix: '[vV]'
-continuous-delivery-fallback-tag: 'ci'
-branches:
-  master:
-    regex: ^master
-    tag: 'ci'
+branches: {}
 ignore:
   sha: []
 merge-message-formats: {}
