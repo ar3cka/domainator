@@ -191,9 +191,6 @@ namespace Domainator.UnitTests.Infrastructure.Repositories
         [GenericAggregateRootRepositoryTestsData]
         public async Task FindByIdBatchAsync_LoadsBatchOfStates(
             [Frozen] Mock<IAggregateStateStorage> stateStorageMock,
-            ProjectId projectId,
-            string paginationToken,
-            string newPaginationToken,
             TodoTaskId id,
             AggregateVersion version,
             TodoTask.AggregateState state,
@@ -224,11 +221,7 @@ namespace Domainator.UnitTests.Infrastructure.Repositories
         [GenericAggregateRootRepositoryTestsData]
         public async Task FindByIdBatchAsync_WhenStateForIdNotFound_ReturnsNothing(
             [Frozen] Mock<IAggregateStateStorage> stateStorageMock,
-            ProjectId projectId,
-            string paginationToken,
-            string newPaginationToken,
             TodoTaskId id,
-            AggregateVersion version,
             TodoTaskRepository repository)
         {
             // arrange
