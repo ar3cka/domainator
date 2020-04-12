@@ -14,5 +14,10 @@ namespace Domainator.Infrastructure.Configuration
         /// Gets configuration of Aggregate root repositories
         /// </summary>
         RepositoriesConfiguration Repository { get; }
+
+        /// <summary>
+        /// Gets serialization configuration
+        /// </summary>
+        SerializationConfiguration Serialization { get; }
     }
 }
