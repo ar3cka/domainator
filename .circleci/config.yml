@@ -37,7 +37,7 @@ jobs:
           command: |
             export PATH="$PATH:/root/.dotnet/tools"
             dotnet gitversion /showconfig
-            dotnet gitversion /updateassemblyinfo /diag
+            dotnet gitversion /updateassemblyinfo > version.json
 
       - run:
           name: Build
@@ -93,15 +93,10 @@ workflows:
     jobs:
       - build:
           context: SonarCloud
-          filters:
-            tags:
-              only: /.*/
       - publish:
           requires:
               - build
           context: Nuget
           filters:
-            tags:
-              only: /^v[0-9]+(\.[0-9]+)?(\.[0-9]+)?$/
             branches:
-              ignore: /.*/
+              ignore: master
