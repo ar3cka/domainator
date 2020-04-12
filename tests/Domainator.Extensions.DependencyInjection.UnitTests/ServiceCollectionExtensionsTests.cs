@@ -1,7 +1,9 @@
 using Domainator.Demo.Domain.Domain;
+using Domainator.Demo.Domain.Infrastructure.Repositories.StateManagement.Serialization.Json;
 using Domainator.Entities;
 using Domainator.Infrastructure.DependencyInjection;
 using Domainator.Infrastructure.Repositories;
+using Domainator.Infrastructure.Repositories.StateManagement.Serialization;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
@@ -19,14 +21,14 @@ namespace Domainator.Extensions.DependencyInjection.UnitTests
         [Fact]
         public void AddDomainatorInfrastructure_WhenNoRepositoryTypeSpecified_RegistersGenericImplementation()
         {
-            // act
+            // arrange
             _services.AddDomainatorInfrastructure(builder =>
             {
                 builder.StateManagement.UseDummyStorage();
                 builder.Repository.ForAggregate<TodoTaskId, TodoTask, TodoTask.AggregateState>();
             });
 
-            // assert
+            // act
             var provider = _services.BuildServiceProvider();
 
             // assert
@@ -38,7 +40,7 @@ namespace Domainator.Extensions.DependencyInjection.UnitTests
         [Fact]
         public void AddDomainatorInfrastructure_WhenRepositoryTypeSpecified_RegistersInterfaceAndImplementation()
         {
-            // act
+            // arrange
             _services.AddDomainatorInfrastructure(builder =>
             {
                 builder.StateManagement.UseDummyStorage();
@@ -49,7 +51,7 @@ namespace Domainator.Extensions.DependencyInjection.UnitTests
                 });
             });
 
-            // assert
+            // act
             var provider = _services.BuildServiceProvider();
 
             // assert
@@ -57,6 +59,24 @@ namespace Domainator.Extensions.DependencyInjection.UnitTests
             Assert.NotNull(repository);
             Assert.IsType<DummyRepository>(repository);
             Assert.IsType<DummyStateStorage>(((DummyRepository)repository).StateStorage);
+        }
+
+        [Fact]
+        public void AddDomainatorInfrastructure_WhenCustomJsonConverterSpecified_CanResolveSerializer()
+        {
+            // arrange
+            _services.AddDomainatorInfrastructure(builder =>
+            {
+                builder.StateManagement.UseDummyStorage();
+                builder.Serialization.UseJsonConverter<UserIdJsonConverter>();
+            });
+
+            // act
+            var provider = _services.BuildServiceProvider();
+            var serializer = provider.GetService<IAggregateStateSerializer>();
+
+            // assert
+            Assert.NotNull(serializer);
         }
     }
 }
