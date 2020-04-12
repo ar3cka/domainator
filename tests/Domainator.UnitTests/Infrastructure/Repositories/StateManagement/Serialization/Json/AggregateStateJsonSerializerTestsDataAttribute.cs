@@ -1,3 +1,4 @@
+using System;
 using AutoFixture;
 using AutoFixture.AutoMoq;
 using AutoFixture.Xunit2;
@@ -17,6 +18,7 @@ namespace Domainator.UnitTests.Infrastructure.Repositories.StateManagement.Seria
 
             fixture.Register((int id) => new TodoTaskId(id));
             fixture.Register((int id) => new ProjectId(id));
+            fixture.Register((Guid id) => new UserId(id));
 
             return fixture;
         }
