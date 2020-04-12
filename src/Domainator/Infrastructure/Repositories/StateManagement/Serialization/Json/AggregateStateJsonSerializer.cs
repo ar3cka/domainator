@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Domainator.Entities;
 using Domainator.Utilities;
 using Newtonsoft.Json;
@@ -11,22 +12,39 @@ namespace Domainator.Infrastructure.Repositories.StateManagement.Serialization.J
     /// </summary>
     public class AggregateStateJsonSerializer : IAggregateStateSerializer
     {
-        private static readonly JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings
+        private static readonly JsonConverter[] _defaultConverters =
         {
-            NullValueHandling = NullValueHandling.Ignore,
-            DateTimeZoneHandling = DateTimeZoneHandling.Utc,
-            ContractResolver = new DefaultContractResolver
-            {
-                NamingStrategy = new CamelCaseNamingStrategy()
-            },
-            Converters =
-            {
-                new AbstractEntityIdentityValueConverter(),
-                new ChangeSetJsonConverter(),
-                new StringEnumConverter()
-            },
-            Formatting = Formatting.None
+            new AbstractEntityIdentityValueConverter(),
+            new ChangeSetJsonConverter(),
+            new StringEnumConverter()
         };
+
+        private readonly JsonSerializerSettings _jsonSerializerSettings;
+
+        public AggregateStateJsonSerializer() : this(new JsonConverter[0])
+        {
+        }
+
+        public AggregateStateJsonSerializer(IReadOnlyCollection<JsonConverter> customConverters)
+        {
+            Require.NotNull(customConverters, nameof(customConverters));
+
+            _jsonSerializerSettings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                DateTimeZoneHandling = DateTimeZoneHandling.Utc,
+                ContractResolver = new DefaultContractResolver
+                {
+                    NamingStrategy = new CamelCaseNamingStrategy()
+                },
+                Formatting = Formatting.None
+            };
+
+            var converters = new List<JsonConverter>(customConverters);
+            converters.AddRange(_defaultConverters);
+
+            _jsonSerializerSettings.Converters = converters;
+        }
 
         /// <inheritdoc />
         public string SerializeState<TState>(TState state) where TState : class, IAggregateState
