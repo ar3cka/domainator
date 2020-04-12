@@ -1,9 +1,11 @@
 using System;
+using System.Collections.Generic;
 using Domainator.Infrastructure.Configuration;
 using Domainator.Infrastructure.Repositories.StateManagement.Serialization;
 using Domainator.Infrastructure.Repositories.StateManagement.Serialization.Json;
 using Domainator.Utilities;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 
 namespace Domainator.Infrastructure.DependencyInjection
 {
@@ -20,7 +22,6 @@ namespace Domainator.Infrastructure.DependencyInjection
 
             configure(builder);
 
-            services.AddSingleton<IAggregateStateSerializer, AggregateStateJsonSerializer>();
             services.AddSingleton(builder.StateStorageFactory);
 
             services.AddSingleton(
@@ -30,6 +31,17 @@ namespace Domainator.Infrastructure.DependencyInjection
             {
                 services.Add(ServiceDescriptor.Singleton(repositoryType.InterfaceType, repositoryType.ImplementationType));
             }
+
+            services.AddSingleton<IAggregateStateSerializer, AggregateStateJsonSerializer>(provider =>
+            {
+                var converters = new List<JsonConverter>(builder.CustomJsonConverters.Count);
+                foreach (var converterType in builder.CustomJsonConverters)
+                {
+                   converters.Add((JsonConverter)ActivatorUtilities.GetServiceOrCreateInstance(provider, converterType));
+                }
+
+                return new AggregateStateJsonSerializer(converters);
+            });
 
             return services;
         }
