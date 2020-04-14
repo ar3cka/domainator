@@ -137,7 +137,15 @@ namespace Domainator.Infrastructure.Repositories.StateManagement.Storage
 
             try
             {
-                await _dynamoDbTable.PutItemAsync(document, putConfig, cancellationToken);
+                if (version == AggregateVersion.Emtpy)
+                {
+                    await PutItemAsync(cancellationToken, document);
+                }
+                else
+                {
+                    await UpdateItemAsync(version, cancellationToken, document);
+                }
+
             }
             catch (ConditionalCheckFailedException exception)
             {
@@ -145,6 +153,26 @@ namespace Domainator.Infrastructure.Repositories.StateManagement.Storage
                     $"The version \"{version.ToString()}\" of the aggregate state \"{id}\" is not the latest",
                     exception);
             }
+        }
+
+        private async Task UpdateItemAsync(AggregateVersion version, CancellationToken cancellationToken,
+            Document document)
+        {
+            var updateConfig = new UpdateItemOperationConfig();
+            updateConfig.ExpectedState = new ExpectedState();
+            updateConfig.ExpectedState.AddExpected(KnownTableAttributes.Version, ScanOperator.Equal, (int)version);
+
+            await _dynamoDbTable.UpdateItemAsync(document, updateConfig, cancellationToken);
+        }
+
+        private async Task PutItemAsync(CancellationToken cancellationToken, Document document)
+        {
+            var putConfig = new PutItemOperationConfig();
+            putConfig.ExpectedState = new ExpectedState();
+            putConfig.ExpectedState.AddExpected(KnownTableAttributes.PartitionKey, false);
+            putConfig.ExpectedState.AddExpected(KnownTableAttributes.SortKey, exists: false);
+
+            await _dynamoDbTable.PutItemAsync(document, putConfig, cancellationToken);
         }
 
         private void FillKnownAttributes<TState>(
