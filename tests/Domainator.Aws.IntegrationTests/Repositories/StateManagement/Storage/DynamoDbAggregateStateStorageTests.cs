@@ -210,7 +210,7 @@ namespace Domainator.Aws.IntegrationTests.Repositories.StateManagement.Storage
             TodoTask.AggregateState state = new TodoTask.AggregateState();
             state.Mutate(new TodoTaskCreated(projectId, taskId));
             await _stateStorage.PersistAsync(taskId, state, AggregateVersion.Emtpy, new Dictionary<string, object>(), CancellationToken.None);
-            var ( createdAt1, updatedAt1) = await GetAuditDatesAsync(taskId);
+            var (createdAt1, updatedAt1) = await GetAuditDatesAsync(taskId);
 
             var (newVersion, newState) = await _stateStorage.LoadAsync<TodoTask.AggregateState>(taskId, CancellationToken.None);
             newState.Mutate(new TodoTaskCompleted(taskId));
@@ -221,7 +221,7 @@ namespace Domainator.Aws.IntegrationTests.Repositories.StateManagement.Storage
             Assert.Equal(createdAt1, createdAt2);
             Assert.True(updatedAt2 > updatedAt1);
             createdAt1.Should().BeCloseTo(DateTimeOffset.UtcNow, 1000);
-            createdAt1.Should().BeCloseTo(DateTimeOffset.UtcNow, 500);
+            updatedAt2.Should().BeCloseTo(DateTimeOffset.UtcNow, 500);
         }
 
         private async Task<(DateTimeOffset, DateTimeOffset)> GetAuditDatesAsync(TodoTaskId taskId)
