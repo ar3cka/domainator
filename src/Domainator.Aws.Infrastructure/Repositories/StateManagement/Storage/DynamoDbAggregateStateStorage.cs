@@ -139,11 +139,11 @@ namespace Domainator.Infrastructure.Repositories.StateManagement.Storage
             {
                 if (version == AggregateVersion.Emtpy)
                 {
-                    await PutItemAsync(cancellationToken, document);
+                    await PutItemAsync(document, cancellationToken);
                 }
                 else
                 {
-                    await UpdateItemAsync(version, cancellationToken, document);
+                    await UpdateItemAsync(version, document, cancellationToken);
                 }
 
             }
@@ -155,8 +155,7 @@ namespace Domainator.Infrastructure.Repositories.StateManagement.Storage
             }
         }
 
-        private async Task UpdateItemAsync(AggregateVersion version, CancellationToken cancellationToken,
-            Document document)
+        private async Task UpdateItemAsync(AggregateVersion version,Document document, CancellationToken cancellationToken)
         {
             var updateConfig = new UpdateItemOperationConfig();
             updateConfig.ExpectedState = new ExpectedState();
@@ -165,7 +164,7 @@ namespace Domainator.Infrastructure.Repositories.StateManagement.Storage
             await _dynamoDbTable.UpdateItemAsync(document, updateConfig, cancellationToken);
         }
 
-        private async Task PutItemAsync(CancellationToken cancellationToken, Document document)
+        private async Task PutItemAsync(Document document, CancellationToken cancellationToken)
         {
             var putConfig = new PutItemOperationConfig();
             putConfig.ExpectedState = new ExpectedState();
