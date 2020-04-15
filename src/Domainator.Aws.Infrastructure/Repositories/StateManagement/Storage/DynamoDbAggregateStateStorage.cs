@@ -129,12 +129,6 @@ namespace Domainator.Infrastructure.Repositories.StateManagement.Storage
             FillKnownAttributes(id, state, version, document);
             FillCustomAttributes(attributes, document);
 
-            var putConfig = new PutItemOperationConfig();
-            putConfig.ExpectedState = new ExpectedState();
-            putConfig.ExpectedState.ConditionalOperator = ConditionalOperatorValues.Or;
-            putConfig.ExpectedState.AddExpected(KnownTableAttributes.Version, ScanOperator.Equal, (int)version);
-            putConfig.ExpectedState.AddExpected(KnownTableAttributes.Version, exists: false);
-
             try
             {
                 if (version == AggregateVersion.Emtpy)
@@ -145,7 +139,6 @@ namespace Domainator.Infrastructure.Repositories.StateManagement.Storage
                 {
                     await UpdateItemAsync(version, document, cancellationToken);
                 }
-
             }
             catch (ConditionalCheckFailedException exception)
             {
@@ -168,7 +161,7 @@ namespace Domainator.Infrastructure.Repositories.StateManagement.Storage
         {
             var putConfig = new PutItemOperationConfig();
             putConfig.ExpectedState = new ExpectedState();
-            putConfig.ExpectedState.AddExpected(KnownTableAttributes.PartitionKey, false);
+            putConfig.ExpectedState.AddExpected(KnownTableAttributes.PartitionKey, exists: false);
             putConfig.ExpectedState.AddExpected(KnownTableAttributes.SortKey, exists: false);
 
             await _dynamoDbTable.PutItemAsync(document, putConfig, cancellationToken);
