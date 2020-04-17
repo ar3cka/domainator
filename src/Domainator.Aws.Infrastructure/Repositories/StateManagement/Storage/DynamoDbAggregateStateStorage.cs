@@ -63,8 +63,10 @@ namespace Domainator.Infrastructure.Repositories.StateManagement.Storage
             var idToValueMap = new Dictionary<string, IEntityIdentity>(ids.Count);
             foreach (var id in ids)
             {
-                batchGet.AddKey(ConvertToPrimaryKey(id), HeadSortKeyValue);
-                idToValueMap[id.Value] = id;
+                string primaryKey = ConvertToPrimaryKey(id);
+                
+                batchGet.AddKey(primaryKey, HeadSortKeyValue);
+                idToValueMap[primaryKey] = id;
             }
 
             await batchGet.ExecuteAsync(cancellationToken);
@@ -72,12 +74,12 @@ namespace Domainator.Infrastructure.Repositories.StateManagement.Storage
             var results = new Dictionary<IEntityIdentity, (AggregateVersion, TState)>(batchGet.Results.Count, EntityIdentity.DefaultComparer);
             foreach (var document in batchGet.Results)
             {
-                var aggregateId = (string)document[KnownTableAttributes.AggregateId];
+                var partitionKey = (string)document[KnownTableAttributes.PartitionKey];
                 var version = (int)document[KnownTableAttributes.Version];
                 var data = (string)document[KnownTableAttributes.Data];
                 var state = _serializer.DeserializeState<TState>(data);
 
-                results[idToValueMap[aggregateId]] = (AggregateVersion.Create(version), state);
+                results[idToValueMap[partitionKey]] = (AggregateVersion.Create(version), state);
             }
 
             return results;
