@@ -29,7 +29,7 @@ namespace Domainator.Infrastructure.DependencyInjection
 
             foreach (var repositoryType in builder.RegisteredRepositories)
             {
-                services.Add(ServiceDescriptor.Singleton(repositoryType.InterfaceType, repositoryType.ImplementationType));
+                services.Add(ServiceDescriptor.Scoped(repositoryType.InterfaceType, repositoryType.ImplementationType));
             }
 
             services.AddSingleton<IAggregateStateSerializer, AggregateStateJsonSerializer>(provider =>
