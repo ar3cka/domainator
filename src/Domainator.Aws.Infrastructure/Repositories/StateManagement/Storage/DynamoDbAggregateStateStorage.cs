@@ -18,6 +18,12 @@ namespace Domainator.Infrastructure.Repositories.StateManagement.Storage
     {
         private const string HeadSortKeyValue = "HEAD";
 
+        private static readonly List<string> _indexAttributesToGet = new List<string>(2)
+        {
+            KnownTableAttributes.AggregateId,
+            KnownTableAttributes.AggregateType
+        };
+
         private readonly Table _dynamoDbTable;
         private readonly IAggregateStateSerializer _serializer;
 
@@ -64,7 +70,7 @@ namespace Domainator.Infrastructure.Repositories.StateManagement.Storage
             foreach (var id in ids)
             {
                 string primaryKey = ConvertToPrimaryKey(id);
-                
+
                 batchGet.AddKey(primaryKey, HeadSortKeyValue);
                 idToValueMap[primaryKey] = id;
             }
@@ -100,6 +106,7 @@ namespace Domainator.Infrastructure.Repositories.StateManagement.Storage
                 IndexName = $"{query.AttributeName}Index",
                 Filter = filter,
                 Limit = query.Limit,
+                AttributesToGet = _indexAttributesToGet,
                 PaginationToken = string.IsNullOrEmpty(query.PaginationToken) ? null : query.PaginationToken
             });
 
