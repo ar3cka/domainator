@@ -100,7 +100,7 @@ namespace Domainator.Infrastructure.Repositories.StateManagement.Storage
                 IndexName = $"{query.AttributeName}Index",
                 Filter = filter,
                 Limit = query.Limit,
-                AttributesToGet = null,
+                AttributesToGet = new List<string>(),
                 PaginationToken = string.IsNullOrEmpty(query.PaginationToken) ? null : query.PaginationToken
             });
 
