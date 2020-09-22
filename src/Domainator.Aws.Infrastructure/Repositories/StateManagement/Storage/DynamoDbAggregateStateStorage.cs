@@ -29,6 +29,13 @@ namespace Domainator.Infrastructure.Repositories.StateManagement.Storage
             KnownTableAttributes.Version
         };
 
+        private static readonly List<string> _loadBatchAttributesToGet = new List<string>(2)
+        {
+            KnownTableAttributes.PartitionKey,
+            KnownTableAttributes.Data,
+            KnownTableAttributes.Version
+        };
+
         private readonly Table _dynamoDbTable;
         private readonly IAggregateStateSerializer _serializer;
 
@@ -75,7 +82,7 @@ namespace Domainator.Infrastructure.Repositories.StateManagement.Storage
 
             var batchGet = _dynamoDbTable.CreateBatchGet();
             batchGet.ConsistentRead = true;
-            batchGet.AttributesToGet = _loadAttributesToGet;
+            batchGet.AttributesToGet = _loadBatchAttributesToGet;
 
             var idToValueMap = new Dictionary<string, IEntityIdentity>(ids.Count);
             foreach (var id in ids)
