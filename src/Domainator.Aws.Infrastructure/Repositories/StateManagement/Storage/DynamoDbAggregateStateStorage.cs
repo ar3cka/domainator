@@ -23,6 +23,12 @@ namespace Domainator.Infrastructure.Repositories.StateManagement.Storage
             KnownTableAttributes.AggregateId, KnownTableAttributes.AggregateType
         };
 
+        private static readonly List<string> _loadAttributesToGet = new List<string>(2)
+        {
+            KnownTableAttributes.Data,
+            KnownTableAttributes.Version
+        };
+
         private readonly Table _dynamoDbTable;
         private readonly IAggregateStateSerializer _serializer;
 
@@ -41,7 +47,12 @@ namespace Domainator.Infrastructure.Repositories.StateManagement.Storage
         {
             Require.NotNull(id, nameof(id));
 
-            var getConfig = new GetItemOperationConfig {ConsistentRead = true};
+            var getConfig = new GetItemOperationConfig
+            {
+                ConsistentRead = true,
+                AttributesToGet = _loadAttributesToGet
+            };
+
             var document = await _dynamoDbTable.GetItemAsync(ConvertToPrimaryKey(id), HeadSortKeyValue, getConfig, cancellationToken);
             if (document != null)
             {
@@ -64,6 +75,7 @@ namespace Domainator.Infrastructure.Repositories.StateManagement.Storage
 
             var batchGet = _dynamoDbTable.CreateBatchGet();
             batchGet.ConsistentRead = true;
+            batchGet.AttributesToGet = _loadAttributesToGet;
 
             var idToValueMap = new Dictionary<string, IEntityIdentity>(ids.Count);
             foreach (var id in ids)
