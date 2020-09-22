@@ -20,7 +20,8 @@ namespace Domainator.Infrastructure.Repositories.StateManagement.Storage
 
         private static readonly List<string> _indexAttributesToGet = new List<string>(2)
         {
-            KnownTableAttributes.AggregateId, KnownTableAttributes.AggregateType
+            KnownTableAttributes.AggregateId,
+            KnownTableAttributes.AggregateType
         };
 
         private static readonly List<string> _loadAttributesToGet = new List<string>(2)
@@ -29,7 +30,7 @@ namespace Domainator.Infrastructure.Repositories.StateManagement.Storage
             KnownTableAttributes.Version
         };
 
-        private static readonly List<string> _loadBatchAttributesToGet = new List<string>(2)
+        private static readonly List<string> _loadBatchAttributesToGet = new List<string>(3)
         {
             KnownTableAttributes.PartitionKey,
             KnownTableAttributes.Data,
