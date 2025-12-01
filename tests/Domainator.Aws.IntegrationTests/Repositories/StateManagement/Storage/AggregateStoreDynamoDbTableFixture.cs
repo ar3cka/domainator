@@ -8,14 +8,14 @@ namespace Domainator.Aws.IntegrationTests.Repositories.StateManagement.Storage
 {
     public class AggregateStoreDynamoDbTableFixture
     {
-        public Table StoreTable { get; }
+        public ITable StoreTable { get; }
 
         public AggregateStoreDynamoDbTableFixture()
         {
             StoreTable = PrepareTable();
         }
 
-        private static Table PrepareTable()
+        private static ITable PrepareTable()
         {
             var client = new AmazonDynamoDBClient(new AmazonDynamoDBConfig
             {
@@ -75,7 +75,9 @@ namespace Domainator.Aws.IntegrationTests.Repositories.StateManagement.Storage
                 client.UpdateTableAsync(createIndex).GetAwaiter().GetResult();
             }
 
+#pragma warning disable CS0618 // Type or member is obsolete
             return Table.LoadTable(client, "AggregateStore");
+#pragma warning restore CS0618 // Type or member is obsolete
         }
     }
 }

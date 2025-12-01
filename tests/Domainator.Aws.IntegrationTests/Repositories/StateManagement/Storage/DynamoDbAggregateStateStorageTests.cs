@@ -17,7 +17,7 @@ namespace Domainator.Aws.IntegrationTests.Repositories.StateManagement.Storage
     public class DynamoDbAggregateStateStorageTests : IClassFixture<AggregateStoreDynamoDbTableFixture>
     {
         private readonly IAggregateStateStorage _stateStorage;
-        private readonly Table _storageTable;
+        private readonly ITable _storageTable;
 
         public DynamoDbAggregateStateStorageTests(AggregateStoreDynamoDbTableFixture fixture)
         {

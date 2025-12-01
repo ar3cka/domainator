@@ -14,6 +14,7 @@ namespace Domainator.Infrastructure.Repositories.StateManagement.Storage
     /// <summary>
     /// Provides the implementation of <see cref="IAggregateStateStorage"/> based on AWS DynamoDB.
     /// </summary>
+    [CLSCompliant(false)]
     public class DynamoDbAggregateStateStorage : IAggregateStateStorage
     {
         private const string HeadSortKeyValue = "HEAD";
@@ -37,10 +38,10 @@ namespace Domainator.Infrastructure.Repositories.StateManagement.Storage
             KnownTableAttributes.Version
         };
 
-        private readonly Table _dynamoDbTable;
+        private readonly ITable _dynamoDbTable;
         private readonly IAggregateStateSerializer _serializer;
 
-        public DynamoDbAggregateStateStorage(Table dynamoDbTable, IAggregateStateSerializer serializer)
+        public DynamoDbAggregateStateStorage(ITable dynamoDbTable, IAggregateStateSerializer serializer)
         {
             Require.NotNull(dynamoDbTable, nameof(dynamoDbTable));
             Require.NotNull(serializer, nameof(serializer));
